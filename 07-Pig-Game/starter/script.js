@@ -34,7 +34,8 @@ const game = {
   roll: function () {
     if (this.winner) return;
     const number = Math.trunc(Math.random() * 6) + 1;
-    dice.setAttribute('src', `dice-${number}.png`);
+    //dice.setAttribute('src', `dice-${number}.png`);
+    dice.src = `dice-${number}.png`;
     dice.classList.remove('hidden');
     if (number === 1) {
       this.switch();

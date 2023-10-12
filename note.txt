@@ -76,6 +76,8 @@
 		classList.contains('hidden')     // 
 		classList.toggle('class')   	 // se c'è il class lo toglie, altrimenti lo aggiunge 
 		
+	elementoselezionato.src = url 	// imposto l'attributo src a un elemento che lo supporta come img 
+		
 	Global events: sono quelli della tastiera, legati al document, quindi l'addEventListener in questo caso lo si fa su document 
 		tre eventi intercettabili: 
 			keyup		
