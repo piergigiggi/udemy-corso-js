@@ -87,3 +87,7 @@
 			// nell'oggetto e che riceviamo in input ci sono tutte le info sull'evento catturato
 			
 		});
+		
+		
+	*** VERIFICARE 
+		perché si può mettere const un array ?????
