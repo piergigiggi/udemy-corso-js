@@ -1,0 +1,87 @@
+
+	let indice = ..;
+	while(condizione) {			//continua a ripetere fintanto che la condizione è vera
+		istruzioni
+		istruzioni
+		incremento indice
+	}
+	
+	** ROBA UTILE DA INSTALLARE IN VS CODE 
+		PRETTIER 
+			poi andare in setting, cercare default formatter, selezionare esbenp.prettier-vscode
+				selezionare anche format on save, mettere la spunta su Editor: Format On Save
+		SNIPPET, PER EVITARE DI SCRIVERE console.log O ALTRA ROBA RIPETITIVA 
+			setting, use snippet, use new global snippet file, dare nome del cavolo, uncomment l'esempio print to console 
+			
+		LIVE SERVER : PER AUTOMATIZZARE RELOAD BROWSER DOPO MODIFICA A JS 
+			aggiunge pulsante GoLive in basso a destra
+			per lanciarlo: aprire terminale e nel folder del progetto digitare live-server
+			
+	** codewars.com challenges for free 
+	
+	********* CSS **********
+	
+	inline elements: occupano spazio in una riga, non box, tipo tag anchor, input, button
+	block elements : il loro spazio un box che occupa tutta la larghezza dello schermo
+	
+	commenti: /* .... */
+	
+	Global Reset: reimpostare tutti i margin e i padding 
+		Per selezionare tutti gli elementi usare il selettore * 
+	
+	* {
+		margin: 0;		// quando si imposta zero non serve specificare px o %
+		padding: 0;
+		box-sizing: border-box; //serve per dichiarare che voglio le dimensioni di un elemento esattamente come le ho dichiarate: se dichiaro una form con width 400 e padding 25 e margin 5, il width non sarà 400+25+25+5 ma la somma di tutto dovrà fare 400 
+	}
+	
+	elemento1, elemento2 {  //stile per più elementi
+		...
+		...
+	}
+	
+	** child selector: per selezionare un elemento contenuto in un altro elemento scrivo l'elemento che contiene e poi l'elemento contenuto separati da spazio 
+	#mio-div h2 {		// seleziono elemento h2 contenuto nell'elemento con id mio-div
+	
+	}
+	
+	********** JAVASCRIPT DOM MANIPULATION ***********
+	
+	document.querySelector('selettore') // esempio .classe #div ecc..
+		NOTA se selettore seleziona più elementi, restituisce solo il primo. per avere l'array di tutti gli elementi usare querySelectorAll
+		non seleziona come jquery, seleziona proprio l'html dell'elemento selezionato 
+		.textContent 	restituisce testo dell'elemento selezionato, per esempio per gli elementi p
+		.value			restituisce valore di un elemento, per esempio input text 
+	
+	document.querySelectorAll('selettore') // esempio .classe #div ecc..  seleziona TUTTI gli elementi selezionati dal selettore in input 
+		
+	DOM = Document Object Manipulation, il browser crea una rappresentazione ad albero di tutti gli elementi dell'html 
+		essendo un albero sono validi tutti i concetti tipici: child element, parent element, sibling element (fratello) ecc.. 
+		per esempio un elemento P contenente un testo e un anchor, sarà un elemento con due child: text e a, il primo valorizzato col testo, il secondo con un child text per il suo testo 
+		document è l'oggetto entry point del DOM 
+		DOM non fa parte di Javascript ma fa parte del WEB APIs, implementate in ciascun browser e con le quali Javascript si interfaccia 
+		
+	Event Listener = codice eseguito al verificarsi di un evento ad uno specifico elemento 
+		selezionare elemento, per esempio un button, e poi addEventListener 
+		document.querySelector('.check').addEventListener(evento, funzione);
+		
+		document.querySelector('body').style.backgroundColor = '#60b347' 		// seleziono body element e imposto css style background-color che in javascript si scrive in Camel Case quindi backgroundColor  
+																				// gli style si impostano sempre con una stringa ! no numeri
+																				
+		document.getElementById('id')	// get per id, non serve cancelletto !
+																				
+	elementoselezionato.classList	// restituisce elenco di classi dell'elemento 
+		classList.remove('hidden','','') // rimuovo uno o più classi dall'elemento, non mettere il punto davanti !
+		classList.add 
+		classList.contains('hidden')     // 
+		classList.toggle('class')   	 // se c'è il class lo toglie, altrimenti lo aggiunge 
+		
+	Global events: sono quelli della tastiera, legati al document, quindi l'addEventListener in questo caso lo si fa su document 
+		tre eventi intercettabili: 
+			keyup		
+			keypress
+			keydown
+		document.addEventListener('keydown', function(e){
+			// nell'oggetto e che riceviamo in input ci sono tutte le info sull'evento catturato
+			
+		});
