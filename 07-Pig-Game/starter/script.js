@@ -11,8 +11,6 @@ const player0 = document.querySelector('.player--0');
 const player1 = document.querySelector('.player--1');
 const dice = document.querySelector('.dice');
 
-console.log('ciao');
-
 const game = {
   winner: false,
   scores: [0, 0],
