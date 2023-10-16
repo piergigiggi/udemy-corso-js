@@ -1,11 +1,320 @@
 
+chrome 
+ctrl-shift-j console chrome
+ctrl-shift-i elements
+ctrl-shift-m modo mobile on/off
+console chrome: posso usarla come calcolatrice !!
+
+vscode
+ctrl+ù toggle comments 
+IN HTML: ! + TAB  SCRIVE TEMPLATE HTML DI BASE 
+
+windows
+win+è emoticons
+
+ROBA UTILE DA INSTALLARE IN VSCODE 
+	LIVE SERVER
+	
+PAROLE UTILI PER SPIEGARE
+	ELEMENTS HTML, NO TAG, I TAG SONO I DELIMITATORI, UN ELEMENTO INPUT, UN ELEMENTO SELECT ECC..
+	
+BEST PRACTICES 
+	HTML
+		NON USARE ID PER SELEZIONARE O APPLICARE STYLE A ELEMENTI, USARE INVECE CLASS !!
+		ID E CLASS SI SCRIVONO CON -, NON IN CAMELCASE, ESEMPI: course-image, your-name 
+	JS 
+		NON USARE VAR, USARE CONST/LET 
+		NON USARE ARROW FUNCTION COME METODI DI UN OGGETTO, IL THIS IN ESSE NON PUNTA ALL'OGGETTO MA AL PRIMO SCOPE PARENT UTILE 
+		USARE STRICT MODE !
+		USARE === !== 
+		ATTENZIONE A Object.assign PER FARE COPIA DI OGGETTI: ESEGUE SHALLOW COPY CIOE' COPIA DI PRIMO LIVELLO, PER FARE DEEP CLONE USARE... DA COMPLETARE 
+		USARE CONST PER GLI OGGETTI PER EVITARE (CON ERRORE) CHE VENGANO SOSTITUITI DA ALTRI OGGETTI, ANCHE OGGETTO VUOTO
+
+NOTA BENE: IN GULP IL CHECK DELLA VERSIONE VIENE FATTO DA BABEL, CON FALLBACK PER GESTIRE CODICE IN VECCHI BROWSER. APPROFONDIRE. 
+
+variabili
+	caratteri ammessi: _ $
+	non possono iniziare con numeri 
+	"name" si può ancora usare ma può dare problemi 
+	scrivere le costanti tutto in maiuscolo 
+	
+data types, sono 7 
+	number: sono tutti floating, cioè hanno i decimali ! anche quando definisco un "intero" let age = 23 in realtà per js è 23.0
+	string
+	boolean 
+	undefined: valore assunto da una variabile che non è stata ancora defined (empty value). es: let age; ma è anche il tipo di "dato" di una variabile non valorizzata. 
+				quindi se dichiaro una variabile senza valore, il suo valore sarà undefined e il suo tipo (typeof) sarà undefined 
+				infatti typeof undefined (il valore) restituisce undefined (il tipo) 
+				attenzione che typeof restisce il tipo in una stringa ! quindi se faccio typeof typeof undefined ottengo string perché il tipo di dato del risultato di typeof undefined è "undefined" che è una stringa :)
+	null: empty value, come undefined.. 
+		stranezza: typeof null restituisce "object" ! e' un bug di una vecchia versione di JS mantenuto per legacy
+	Symbol (introdotto con ES2015) value unico e che non può essere modificato ? 
+	BigInt (introdotto con ES2020) per numeri troppo grandi per number 
+	
+	NB: è il valore che è di un tipo, non la variabile!. le variabili non devono essere manualmente definite di un tipo, lo fa dinamicamente JS in base al valore immesso nella variabili (Dynamic Typing). 
+		da qui deriva la possibilità di valorizzare una variabile con valori di tipo diverso, per esempio prima numero e poi stringa.
+		proprio per questo esiste l'operatore typeof che mi dice di che tipo è un valore o una variabile valorizzata
+		per esempio typeof true restituisce boolean 
+		
+	cambiare valore ad una variabile si dice mutating the variable 
+
+commenti 
+	vs code: 
+	
+dichiarare variabili: 
+	let usare per variabili che cambieranno valore 
+	var è come let, non usare, roba vecchia e poi è scope global
+	const dichiarare una costante, il cui valore non può essere mutato (immutable variable); non possono essere dichiarate senza valore, è illegal
+		const ageOfBirth = 1991; 
+		BEST PRATICE: usare const come prima scelta, e let solo se ho bisogno di cambiare valore in seguito. mutable variables aumentano la probabilità di bug nel codice. 
+		NOTA BENE: solo i dati primitivi sono immutable, gli oggetti invece sì ! anche con const !
+		
+	Posso dichiarare più variabili nella stessa riga di codice: 
+		const x, y; 
+	Posso assegnare più variabili nella stessa riga: 
+		x = y = 20-10;
+	
+console.log può scrivere n variabili, basta separarle con una virgola, esempio: console.log(variabile1, variabile2, variabile3), vengono separati da uno spazio
+	console.log("variabile1: " + variabile1, "variabile2: " + variabile2);
+	
+operatori matematici 
+	+ (anche per concatenare)
+	-
+	* 
+	/ 
+	** potenza 2 ** 3 = 2 elevato alla potenza di 3 
+	
+typeof operator 
+assign operator 
+	= 
+	+= 	variabile = variabile + ...
+	*= /=
+	++  aggiunge 1 
+	-- toglie 1 
+comparison operator 
+	< > <= >=  attenzione all'ultima, non scrivere => perché è lambda !
+	
+operator precedence 
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_precedence
+		tabella precedence numbers !
+		
+Template literals multiline strings 
+	Introdotto in ES6 2015 
+	usa ` (alt 96) per dichiarare inizio fine template e all'interno ${variabile o espressione} per inserire variabile o un'espressione js come operazione matematica o altro ancora 	
+	const log = `var1: ${var1}, var2: ${var2}`
+	***** NOTA BENE: il carattere backtick ` si può usare anche delimitatore di stringa, ha il vantaggio di poter usare al suo interno apice singolo o doppio senza problemi WOW !
+	inoltre si può andare a capo senza usare backslash e altra roba simile: 
+		console.log(`Ciao 
+		da
+		giggi`);
+	
+Type Conversion = Manual convertion 
+	Number(string) converte stringa in number, se in input c'è qualcosa di diverso da numero restituisce NaN (Not a Number) (typeof NaN restituisce "number" !)
+	String(numero) converte number in string 
+Type Coercion   = Automatic convertion per esempio quando concateno con l'operatore + stringa con numero, JS converte number in string in automatico.
+				 Attenzione: gli operatori matematici -,*,/ fanno il contrario, convertono stringhe in numeri. esempio '23' - '10' risultato 13. 
+				 
+Truthy e Falsy values: E' IL CONCETTO CHE FA FUNZIONARE L'IF(VARIABILE) !!
+	falsy = sono valori che non sono esattamente falsi ma lo diventano quando li converto in boolean. Sono 5: 0, '', undefined, null, NaN 
+		Esempio: Boolean(0) restituisce false
+	truthy = sono tutti gli altri valori, cioè tutti i numeri non zero e le stringhe non vuote e gli oggetti anche vuoti ({})
+		Boolean({}) true (empty object) 
+	NOTA: non serve convertire con Boolean perché JS applica Coercion e lo fa implicitamente. 
+	
+Equality Operators 
+	=== strict equality operator, confronta senza fare prima type coercion cioè senza fare auto conversion 	USARE QUESTO !!!! EVITA BUG 
+		!== diverso da 
+	==  loose equality operator, esegue auto convertion prima di fare confronto 
+		!= diverso da 
+		18 === 18 true 
+		18 === '18' false 
+		18 == '18' true  (converte prima la stringa in numero e poi confronta) 
+	
+Prompt 
+	input utente, restituisce stringa 
+	Esempio: const numero = prompt("inserisci numero"); 
+	
+if 
+	if (..) {
+	} else if {
+	} else {
+	}
+
+Logic operators 
+	&& and 
+	|| or
+	! not 
+	
+switch..case..default statement 
+	switch (variabile) {
+		case 'stringa': 
+			...
+			break;
+		case 'stringa': 
+			...
+			break;
+		case 'aaa':
+		case 'bbb':
+			... (codice sia per aaa che per bbb)
+			break;
+		default:
+			...
+	}
+
+Conditional Operator (Ternary, perchè ha tre parti!), è un operator quindi restituisce un valore   
+	condizione ? statement per true : (obbligatorio)statement per false;
+	const variabile = condizione ? statement per true : (obbligatorio)statement per false;
+	si può usare in un Template literals dentro ${...} perchè restituisce valore, a differenza dell'if-then che è uno statement, non restituisce valore e quindi non si può usare dentro  ${...}
+	
+espressione = restituisce valore 
+statement = istruzione
+
+***** FOUNDAMENTALS PART 2 
+
+'use strict';
+	prima istruzione di un file js, altrimenti non strict mode non viene attivato
+	ci impedisce di fare determinate cose
+	crea errori visibili in console quando invece js non in strict mode va in errore in modo silente senza scrivere nulla in console 
+		esempi: 
+			- quando uso variabile non dichiarata perché ho scritto un typo 
+			- quando uso parole chiavi riservate, di uso futuro. tipo interface, private 
+
+** Functions	
+	function declaration: usare key word "function" per dichiarare funzione, è possibile invocare la function prima del suo declaration 
+		paramentro: dichiarazione della variabile in input nella function 
+		argomento : valore passato alla function quando la si invoca, finisce nel parametro 
+		formato: 
+			function nome(parametri) {
+				...
+			}
+	function expression: dichiaro variabile che valorizzo con una function, non è possibile invocare la function prima della dichiarazione della variabile che la "contiene" 
+			const variabile = function (parametri) {  // variabile diventa il nome della function 
+				...
+			}
+			consto var = variable(parametri); 
+			NOTA BENE questo formato è possibile perchè la function diventa un'espressione, che può anche restituire un valore 
+				Da qui il concetto IMPORTANTE che una function è un value, un valore ! sarà del tipo del dato restituito dal return oppure undefined se la function non restituisce niente 
+				
+	(ES6) arrow function, una forma abbreviata di function expression, return è implicito se ho un'unica istruzione, altrimenti lo devo scrivere 
+			const variable = (parametri) => { // se c'è un unico parametro posso omettere parentesi tonde, se c'è un'unica istruzione posso omettere parentesi graffe e "return" 
+				istruzione;
+				return ..;
+			}
+			
+** Data structures 
+	Arrays (zero-based)
+		usare parentesi quadre ('literal syntax')
+			const friends = ['Mario', 'Giggi', 'Luca'];
+			const friends = ['Mario', 123, 'Luca'];
+		usare new Array 
+			const anni = new Array(1990, 1995, 2000, 2005, 2023, 'pippo');		// notare che l'array non è tipizzato, può contenere valori di tipo diverso 
+			
+		accedere: usare sempre parentesi quadre e indice che parte da zero; tra le parentesi posso usare un'espressione che restituisce l'indice voluto
+			const amico = friends[0]; // ritorna 'Mario'
+			const ultimo = friends[friends.length -1] // ottengo l'ultimo elemento: numero elementi - 1 
+			
+		n.ro elementi: length 
+			
+		modificare elemento: 
+			friends[2] = 'Pippo';
+			NOTA BENE: posso mutare singolo elementi dell'array anche se ho dichiarato l'array con const. Questo perchè solo i tipi di dato primitivi sono immutable mentre gli oggetti, tra i qualli anche Array, sono mutable, anche se dichiarati con const
+					   non posso invece sostituire l'array con un altro array ! se lo faccio ricevo errore di oggetto immutable
+		
+		array dentro array: SI-PUO'-FAREE ! 
+			const gianni = ['Gianni', 'Rossi', 2023-1974, [10,20,30]];
+			
+		array di funzioni: SI-PUO' FARE ! 
+			const anni = [calcAge(years[0]), calcAge(years[1]), calcAge(years[years.length-1])];
+			
+		array operations (methods) 
+			push 		aggiunge elementi alla fine dell'array, restituisce nuova lunghezza array
+			unshift		aggiunge elementi all'inizio dell'array, restituisce nuova lunghezza array
+			pop			elimina l'ultimo elemento dell'array, restituisce l'elemento rimosso
+			shift		elimina il primo elemento dell'array, restituisce l'elemento rimosso
+			indexOf		restituisce posizione dell'elemento in input, se l'elemento non esiste restituisce -1
+			includes(ES6) restituisce true se l'elemento in input esiste nell'array, false se non esiste (testa con strict equality, vuol dire che se l'array ha un number e passo in input la stringa del number, includes non lo trova) 
+			concat      concatena l'array con quello/i passato in input 
+		
+	Objects
+		const oggetto = {
+			property: valore,
+			property: valore, 
+			... 
+			property: valore
+		};
+		valore puo' essere un primitivo, un'espressione, una function, un array, un altro oggetto, ecc.. 
+		due modi per riferirsci alle property: 
+			oggetto.property	// dot notation
+			oggetto["property"] // bracket notation: posso comporre la stringa come voglio, con una variabile, una function ecc.. 
+		aggiungere properties: 	// non serve dichiararle in anticipo nell'oggetto, come in java. si possono aggiungere dopo, quando l'oggetto è stato inizializzato
+			oggetto.property = valore
+			oggetto["property"] = valore 
+		definire methods: 
+			const oggetto = {
+				property: valore, 
+				...
+				metodo: function(){
+					return..
+				},
+				metodo2: (a,b) => a+b,
+				metodo3: () => console.log(this.property) 	// nei metodi, con this posso riferirmi all'oggetto da cui ho invocato il metodo e accedere alle sue properties. 
+															   ATTENZIONE CHE NELLE ARROW FUNCTIONS this SI COMPORTA IN MODO DIVERSO !!!!
+			}
+			
+			oggetto.metodo2('aaa','bbb');
+			oggetto['metodo2']('ccc','ddd');	//chiamo metodo anche con notazione bracket 
+			
+** Loops
+	for(let indice=1; indice <= 10; indice++){		// finchè la condizione è vera il codice del for viene eseguito in loop
+		istruzioni..
+		if(...) continue;  // se vero continue salta al loop successivo
+	}
+	
+	while(condizione){
+	
+	}
+	
+			
 	let indice = ..;
 	while(condizione) {			//continua a ripetere fintanto che la condizione è vera
 		istruzioni
 		istruzioni
 		incremento indice
 	}
+		
 	
+** METODO DI APPROCCIO ALLA RISOLUZIONE DEI PROBLEMI 
+	1. Understand the problem.
+		questions..
+	2. Breaking-up into sub problems 
+	
+	METODI CONSOLE 
+		console.log
+		console.warn
+		console.error;
+		console.table (ottimo per oggetti) 
+		debugger
+		
+** HTML CSS ROBA CHE NON SO 
+	HTML 
+		in input attributo placeholder 
+	CSS
+		SELECTOR selettore, quelli più semplici sono quelli per cui si scrive il tag per selezionare il rispettivo elemento, per esempio body {...} h1{..}
+		PER IMPORTARE: <link href="style.css" rel="stylesheet"/>
+		SELECTOR PER CLASS INIZIA CON PUNTO 
+		SELECTOR PER ID INIZIA CON #
+		
+	** BOX MODEL 
+		OGNI ELEMENTO IN PAGINA PUO ESSERE INTESO COME UN BOX, UN RETTANGOLO, CON LE SEGUENTI PROPRIETA': 
+			- CONTENT 
+			- WIDTH: LARGHEZZA
+			- HEIGHT: ALTEZZA
+			- PADDING: AREA TRASPARENTE ATTORNO AL CONTENT, INSIDE THE BOX. USABILE PER CREARE SPAZIO ALL'INTERNO DEL BOX. PROPERTY padding
+			- BORDER: ATTORNO AL PADDING E AL CONTENT 
+			- MARGIN: AREA AL DI FUORI DEL BOX, DI FATTO TRA I BOX DI CIASCUN ELEMENTO: SPAZIO TRA I BOX 
+			- FILL AREA: AREA CHE VIENE RIEMPITA DA BACKGROUND COLOR E BACKGROUND IMAGE, COMPRENDE CONTENT+PADDING+BORDER MA NON MARGIN !
+			
+
 	** ROBA UTILE DA INSTALLARE IN VS CODE 
 		PRETTIER 
 			poi andare in setting, cercare default formatter, selezionare esbenp.prettier-vscode
@@ -162,8 +471,73 @@
 			STESSA COSA PER GLI ARGOMENTI DELLE FUNCTION: POSSONO AVERE GLI STESSI NOMI IN PIU' FUNZIONI, NO PROBLEMA. 
 		2. DI FATTO L'UNICA DIFFERENZA, CREDO, TRA USARE VAR O CONST/LET E' NEI BLOCCHI DI CODICE. NELLE FUNCTION E NEL TOP-LEVEL CODE NON C'E' NESSUNA DIFFERENZA: LO SCOPE CHAIN E' SEMPRE IN SALITA, MAI IN DISCESA. 
 	
-	
-	*** VERIFICARE 
-		perché si può mettere const un array ?????
+	HOISING: MECCANISMO NELL'EXECUTION CONTEXT/VARIABLE ENVIRONMENT PER CUI ALCUNI TIPI DI VARIABILI SONO ACCESSIBILI/USABILI NEL CODICE *PRIMA* CHE VENGANO DICHIARATE. 
+		QUESTO SUCCEDE PERCHE' PRIMA DELL'ESECUZIONE DEL CODICE (DOPO CHE E' STATO COMPILATO!), NELLA FASE CHIAMATA *CREATION PHASE*, NEL CODICE VENGONO CERCATE TUTTE LE DICHIARAZIONI DI VARIABILI (COMPRESE LE FUNCTION OF COURSE), E PER OGNI VARIABILE VIENE CREATA UNA PROPERTY NEL *VARIABLE ENVIRONMENT OBJECT*, QUINDI DI FATTO L'ENGINE JS "CONOSCE" OGNI VARIABILE GIA' PRIMA DELL'ESECUZIONE DEL CODICE ! 
+		L'HOISTING VARIA A SECONDA DEL TIPO DI VARIABILE: 
+									HOISTED 		INITIAL VALUE 			SCOPE								NOTE 
+		. FUNCTION DECLARATION 		YES				ACTUAL FUNCTION			BLOCK (solo con strict mode on)		VUOL DIRE CHE POSSO INVOCARE UNA FUNCTION PRIMA DELLA SUA DICHIARAZIONE 
+		. VAR VARIABLES*			YES				undefined				FUNCTION							COMPORTAMENTO "WEIRD", MOTIVO PER CUI USARE LET/CONST INVECE CHE VAR
+		. LET/CONST					NO				uninitialized, TDZ		BLOCK 								IN REALTA' SONO HOISTATE MA E' COME SE NON LO FOSSERO PERCHE' NON VENGONO INIZIALIZZATE
+																												ERRORE ReferenceError: Cannot access 'provalet' before initialization
+																												TDZ: TEMPORAL DEAD ZONE, CODICE TRA L'INIZIO DELLO SCOPE E LA DICHIARAZIONE DELLA VARIABILE
+																												    E' STATO INTRODOTTO DA ES6 PER EVIDENZIARE USO DI VARIABILI PRIMA DELLA LORO DICHIARAZIONE, INFATTI CON VAR NON OTTENGO ERRORI MA LA VARIABILE E' UNDEFINED !
+		. FUNCTION EXPRESSION E 	DIPENDE SE USO LET/CONST O VAR, STESSO COMPORTAMENTO VEDI SOPRA 			IN GENERALE NON SI POSSONO USARE PRIMA DELLA LORO DICHIARAZIONE
+		  ARROW FUNCTION 	
+		  
+		* CONSIDERAZIONI E BEST PRACTICES: 
+			. NON USARE VAR ! 
+			. DICHIARARE LE VARIABILI ALL'INIZIO DELLO SCOPE 
+			. DICHIARARE PRIMA, USARE POI, ANCHE LE FUNCTION ! ANCHE QUELLE DICHIARATE CON "function"
+			. NOTA BENE: VAR CREA LA VARIABILE NELL'OGGETTO WINDOWS. LET E CONST NON LO FANNO !! 
+			
+	**** THIS OBJECT ****
+		. VARIABILE SPECIALE CREATA PER OGNI EXECUTION CONTEXT (OGNI FUNCTION).
+		. PRENDE IL VALORE DELL (PUNTA ALL..) OWNER DELLA FUNCTION IN CUI IL THIS VIENE USATO
+			NOTA BENE: OWNER E' L'OGGETTO CHE INVOCA LA FUNCTION !
+		. NON E' STATICA. DIPENDE DA COME LA FUNCTION VIENE INVOCATA E IL SUO VALORE E' ASSEGNATO SOLO QUANDO CIO' AVVIENE: 
+			TOP-LINE CODE (SCOPE GLOBAL) THIS PUNTA ALL'OGGETTO WINDOW (CHE E' IL SUO ONWER)
+			METHOD					THIS PUNTA ALL'OGGETTO DEL METHOD (CHE E' IL SUO OWNER) 
+			SEMPLICE INVOCAZIONE 	IN STRICT MODE: THIS = UNDEFINED	(PERCHE' NON PUNTA A UN OWNER) 
+									NON IN STRICT MODE: THIS PUNTA ALL'OGGETTO WINDOW
+			ARROW FUNCTION 			NON HA IL "SUO" THIS MA THIS PUNTA AL PRIMO FUNCTION NORMALE (NON ARROW) CHE CONTIENE L'ARROW FUNCTION (SI DICE "LEXICAL THIS") 
+			EVENT LISTENER			THIS PUNTA ALL'ELEMENTO DOM A CUI LA FUNCTION E' COLLEGATA (CHE E' IL SUO OWNER) 
+			new, call, apply, bind  PIU' AVANTI NEL CORSO.. 
+			
+		. THIS NON PUNTA *MAI* ALLA FUNCTION IN CUI VIENE USATA, SE PUNTA, PUNTA A QUALCOS'ALTRO. INOLTRE NON PUNTA *MAI* ALLA VARIABLE ENVIRONMENT DELLA FUNCTION IN CUI VIENE USATA 
+		. ATTENZIONE AGLI OGGETTI: LE PARENTESI { } PER DEFINIRLO NON SONO UN BLOCK, NON HANNO BLOCK SCOPE ! PER CUI UN OGGETTO DICHIARATO IN TOP-LINE CODE HA GLOBAL SCOPE. 
+		. NON USARE ARROW FUNCTION COME METODI DI UN OGGETTO !
+		. SE HO BISOGNO DI DICHIARARE UNA FUNCTION DENTRO UN METODO E VOGLIO CHE IL THIS PUNTI ALL'OGGETTO HO DUE SOLUZIONI: 
+			. (PRE ES6): PRIMA DELLA FUNCTION DICHIARO UNA VARIABILE VALORIZZATA CON THIS, DI SOLITO CHIAMATA CON THAT O SELF 
+				const that = this; 
+				function ... 	
+					that.property 
+			. (ES6): DICHIARO LA FUNCTION CON UN'ARROW FUNCTION INVECE CHE COME FUNZIONE REGOLARE, IN QUESTO MODO IL THIS NELL'ARROW FUNCTION PUNTA AL PRIMO SCOPE PARENT E QUINDI AL METODO, CHE PUNTA ALL'OGGETTO 
+			
+	**** ARGUMENTS OBJECT ****
+		. E' UN ARRAY CON L'ELENCO DI TUTTI I PARAMETRI PASSATI ALLA FUNCTION, ANCHE QUELLI PER CUI NON HO PREVISTO UN NOME NELL'ELENCO (...) 
+		. NOTA BENE: ARROW FUNCTION NON HANNO QUESTO OGGETTO, COME IL THIS 
 		
-		
+	**** PRIMITIVI VS OGGETTI, BY VALUE, BY REFERENCE 
+		. I TIPI PRIMITIVI (String, number, null, undefined, BigInt, Boolean, Symbol) SONO MEMORIZZATI NEL CALL STACK !, NELL'EXECUTION CONTEXT IN CUI SONO STATI DICHIARATI
+			PER OGNI VARIABILE VIENE SALVATO L'IDENTIFIER, L'ADDRESS E IL VALUE CHE SI TROVA NELL'INDIRIZZO DELL'ADDRESS.
+			*** ATTENZIONE: L'IDENTIFIER E' ASSOCIATO ALL'ADDRESS, NON DIRETTAMENTE AL VALUE
+			IL VALUE REFERENZIATO DA UN ADDRESS NON PUO' ESSERE MODIFICATO, E' IMMUTABLE ! 
+			QUANDO DICHIARO CHE UNA VARIABILE E' UGUALE A UN ALTRA VARIABILE DI TIPO PRIMITIVE IN PRATICA ASSEGNO AL NUOVO IDENTIFIER LO STESSO ADDRESS DEL PRIMO. 
+			QUANDO PERO' CAMBIO IL VALORE, SICCOME IL VALUE DELL'ADDRESS E' IMMUTABLE (PERCHE' ?), VIENE ALLOCATA DELL'ALTRA MEMORIA COL NUOVO VALORE, E QUINDI UN NUOVO ADDRESS 
+		. I TIPI REFERENCE (object, function, Array, altro..) SONO MEMORIZZATI NELL'HEAP
+			PER OGNI OGGETTO VIENE SALVATO NELL'HEAP L'ADDRESS E IL VALUE ALL'INDIRIZZO INDICATO DALL'ADDRESS 
+			MENTRE NEL CALL STACK VIENE SALVATO L'IDENTIFIER, L'ADDRESS CHE PUNTA A UN INDIRIZZO DI MEMORIA CHE CONTIENE IL VALUE, CIOE' L'ADDRESS DELL'HEAP IN CUI C'E' L'INDIRIZZO DEL VALUE 
+			GLI OBJECT SONO SALVATI NELL'HEAP PERCHE' POSSONO ESSERE TROPPO GRANDI PER STARCI NELL CALL STACK. 
+			QUANDO DICHIARO UN NUOVO OGGETTO = UN ALTRO OGGETTO GIA' ESISTENTE, DI FATTO VIENE CREATO UN NUOVO IDENTIFIER CHE, NEL CALL STACK, PUNTA ALLO STESSO ADDRESS DEL PRIMO OGGETTO, CHE COME VALORE HA L'ADDRESS DELL'HEAP IN CUI SI TROVANO LE PROPRIETA' DEL PRIMO OGGETTO. 
+			QUANDO MODIFICO UNA PROPERTY DEL SECONDO OGGETTO, VIENE MODIFICATO L'OGGETTO NELL HEAP, CHE NON E' IMMUTABLE A DIFFERENZA DEL CALL STACK, PER CUI VIENE CAMBIATO L'OGGETTO INIZIALE, PERCHE' E' SEMPRE QUELLO ! DAL PUNTO DI VISTA DEL CALL STACK LA MODIFICA ALLA PROPERTY DELL'OBJECT NON HA CAMBIATO NULLA, E' RIMASTO IMMUTABLE. 
+			DI FATTO HO DUE IDENTIFIER CHE PUNTANO ALLO STESSO VALUE NEL CALL STACK, CHE E' L'INDIRIZZO DI MEMORIA DELL'HEAP IN CUI SI TROVANO I VALORI DELL'OGGETTO.  
+			QUINDI SONO IMMUTABILI SOLO LE VARIABILI CON TYPE PRIMITIVI MENTRE GLI OBJECT (QUINDI ANCHE FUNCTION, ARRAY, ECC.. ) SONO MUTABLE. 
+			E' IL MOTIVO PER CUI POSSO DICHIARE UN OGGETTO CON CONST (ANCHE UN ARRAY..) MA POSSO POI MODIFICARNE LE PROPERTY: QUANDO MODIFICO, MODIFICO L'HEAP, NON IL CALL STACK. 
+			QUANDO INVECE PROVO AD ASSEGNARE UN NUOVO OGGETTO ALL'OGGETTO DEFINITO CON CONST RICEVO UN ERRORE, PERCHE' STO TENTANDO DI ASSEGNARE UN NUOVO HEAP ADDRESS AL RIFERIMENTO NELL'ADDRESS DEL CALL STACK, MA AVENDOLO DEFINITO CONST E' IMMUTABILE. PER POTERGLI ASSEGNARE UN NUOVO OGGETTO DEVO DEFINIRLO CON LET. 
+			
+			NOTA BENE: PER ESEGUIRE UNA COPIA DI UN OGGETTO USARE LA FUNZIONE Object.assign CHE CONCATENA IL PRIMO OGGETTO COL SECONDO E RESTITUISCE UN OGGETTO RISULTANTE, IL TRUCCO E' PASSARE UN OGGETTO VUOTO E POI L'OGGETTO DA COPIARE: 
+				const nuovo oggetto = Object.assign({empty-objecty},oggetto-da-copiare) 
+				
+				NOTA BENE: QUESTA COPIA PERO' ESEGUE SOLO COPIA DI PRIMO LIVELLO (SHALLOW COPY), CIOE' NON CREA COPIE DI EVENTUALI OGGETTI NELL'OGGETTO E COSI' VIA. 
+				PER FARE QUESTA COPIA COMPLETA (DEEP CLONE) NON C'E' UN ISTRUZIONE SEMPLICE, MA SI USA UN TOOL ESTERNO (DA COMPLETARE)  
+	 
