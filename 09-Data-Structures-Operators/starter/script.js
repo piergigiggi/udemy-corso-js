@@ -13,7 +13,7 @@ const restaurant = {
   mainMenu: ['Pizza', 'Pasta', 'Risotto'],
 
   getOrder: function (starterIndex, mainIndex) {
-    return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]]    // restituisco un array di due elementi composto dall'iesimo elemento di starterMenu e l'iesimo elemento di mainMenu
+    return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]]; // restituisco un array di due elementi composto dall'iesimo elemento di starterMenu e l'iesimo elemento di mainMenu
   },
 
   openingHours: {
@@ -72,15 +72,83 @@ const listaNum = [1, 2, [3, 4]];
 const [uno, , [tre, quattro]] = listaNum;
 console.log(uno, tre, quattro);   // SALTO IL DUE E ESTRAGGO TRE E QUATTRO CHE STANNO IN UN ARRAY NELL'ARRAY
 */
-
+/*
 const { name, categories, mainMenu } = restaurant;
 console.log(name, categories, mainMenu);
 
 const mioObj = {
-  propA: "ciao",
-  propB: "da",
-  propC: "giggi"
-}
+  propA: 'ciao',
+  propB: 'da',
+  propC: 'giggi',
+};
 
 const { propA, propB, propC } = mioObj;
 console.log(propA, propB, propC);
+
+// const { propA: property1, propB: property2, propC: property3 } = mioObj;
+// console.log(property3, property2, property1);
+
+const {
+  propA: property1,
+  propB: property2,
+  propertyZZ: giggi = 'forza milan',
+} = mioObj;
+console.log(property1, property2, giggi);
+
+let a = 111;
+let b = 222;
+const obj = { a: 20, b: 30, c: 40 };
+// {
+//   let { a: x, b: y } = obj;
+//   console.log(x, y);
+// }
+({ a, b } = obj);
+console.log(a, b);
+*/
+/*
+const { openingHours } = restaurant;
+console.log(openingHours);
+
+const {
+  fri: { open, close },
+} = openingHours;
+console.log(open, close);
+
+const mioObj = {
+  mioSubObj: {
+    prop1: 10,
+    prop2: 20,
+  },
+};
+
+const {
+  mioSubObj: { prop1: a, prop2: b, c = '999' },
+} = mioObj;
+// console.log(prop1, prop2);
+console.log(a, b, c);
+
+function provaDestr({
+  attr1: a = 'FORZA',
+  attr2: b = 'MILAN',
+  attr3: { uno, due } = { uno: 'DAJE', due: 'MEJO' },
+  attr4 = '!!!',
+}) {
+  console.log(a, b, uno + 'gggg' + due, attr4);
+}
+provaDestr({
+  attr1: 'ciao',
+  attr2: 'da',
+  attr3: {
+    uno: 'gig',
+    due: 'gi',
+  },
+});
+provaDestr({
+  attr4: 'EJA EJA !!!',
+});
+*/
+
+const mioarray = [5, 6, 7];
+const nuovoArray = [1, 2, 3, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
+console.log(nuovoArray);
+console.log(...nuovoArray); // USO LO SPREAD OPERATOR PER SCRIVERE IN CONSOLE TUTTI I SINGOLI ELEMENTI DELL'ARRAY INVECE CHE L'OGGETTO STESSO

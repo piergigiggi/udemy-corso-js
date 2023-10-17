@@ -44,6 +44,7 @@ BEST PRACTICES
 				const listaNum = [1, 2, [3, 4]];
 				const [uno, , [tre, quattro]] = listaNum;
 				console.log(uno, tre, quattro);   // SALTO IL DUE E ESTRAGGO TRE E QUATTRO CHE STANNO IN UN ARRAY NELL'ARRAY		
+		. USARE DESTRUCTURING DI OGGETTO AL POSTO DI LISTA DI ARGOMENTI IN UNA FUNCTION QUANDO NE HA PARECCHI 
 
 NOTA BENE: IN GULP IL CHECK DELLA VERSIONE VIENE FATTO DA BABEL, CON FALLBACK PER GESTIRE CODICE IN VECCHI BROWSER. APPROFONDIRE. 
 
@@ -569,15 +570,69 @@ statement = istruzione
 		** DESTRUCTURING OBJECTS (ES6): STESSA COSA DEGLI ARRAY MA COL VANTAGGIO CHE NON DEVO RISPETTARE L'ORDINE DELLE PROPERTIES. 
 				QUANDO DICHIARO USO PARENTESI GRAFFE INVECE CHE QUADRE
 				PER LE VARIABILI DEVO USARE GLI STESSI NOMI DELLE PROPERTY 
+				NON DEVO RISPETTARE L'ORDINE DI DICHIARAZIONE DELLE PROPERTY NEGLI OGGETTI ! NON E' POSIZIONALE !
 			const mioObj = {
 			  propA: "ciao",
 			  propB: "da",
 			  propC: "giggi"
 			}
 			const { propA, propB, propC } = mioObj;
+			const { propC, propA, propB } = mioObj;  // STESSA COSA ! NON E' POSIZIONALE !
 			console.log(propA, propB, propC);
-			
+				
+				SE VOGLIO USARE NOMI DIVERSI DALLE VARIABILI: 
+			const { propA: property1, propB: property2, propC: property3 } = mioObj;
+			console.log(property3, property2, property1);
+				
+				IMPOSTARE VALORI DI DEFAULT ALLE PROPERTY DEGLI OGGETTI, POSSO ANCHE CAMBIARE NOME NELLO STESSO MOMENTO !
+			const {
+			  propA: property1,
+			  propB: property2,
+			  propertyZZ: giggi = 'forza milan',	// propertyZZ non esiste nell'oggetto mioObj per cui gli assegno il valore 'forza milan' e gli cambio anche il nome in giggi (non ha molto senso..) 
+			} = mioObj;
+				
+				SE VOGLIO MUTARE DELLE VARIABILI PRECEDENTEMENTE DICHIARATE CON LE VARIABILI DESTRUTTURATE DEVO RACCHIUDERE CON PARENTESI TONDA: 
+			let a = 111;
+			let b = 222;
+			const obj = { a: 20, b: 30, c: 40 };
+			({ a, b } = obj);		// RIASSEGNO A E B CON I NUOVI VALORI PRESI DALL'OGGETTO DESTRUTTURATO, DEVO USARE LE PARENTESI TONDE ALTRIMENTI OTTENGO ERRORE "Unexpected token.." 
+			console.log(a, b);			
+				
+				SE DEVO DESTRUTTURARE UN OGGETTO CONTENUTO DENTRO UN ALTRO OGGETTO: 
+			const mioObj = {
+			  mioSubObj: {
+				prop1: 10,
+				prop2: 20,
+			  },
+			};
+			const { mioSubObj: { prop1, prop2 } } = mioObj;		// DESTRUTTURO L'OGGETTO mioSubObj DENTRO DESTRUCTURING DI mioObj CHE LO CONTIENE 
+			console.log(prop1, prop2);
+				
+				OGGETTI PASSATI A METODI O FUNCTION COME ARGOMENTI E COME DESTRUTTURARLI, POSSO IMPOSTARE VALORI DI DEFAULT, CAMBIARE NOME ECC.. 
+			function provaDestr({
+			  attr1: a = 'FORZA',
+			  attr2: b = 'MILAN',
+			  attr3: { uno, due } = { uno: 'DAJE', due: 'MEJO' },			// SE NON VIENE PASSATO attr3 IMPOSTO PER VALORE DI DEFAULT UN OGGETTO CON I DUE ATTRIBUTI VALORIZZATI
+			  attr4 = '!!!',
+			}) {
+			  console.log(a, b, uno + 'gggg' + due, attr4);
+			}
+			provaDestr({
+			  attr1: 'ciao',
+			  attr2: 'da',
+			  attr3: {
+				uno: 'gig',
+				due: 'gi',
+			  },
+			});
+			provaDestr({
+			  attr4: 'EJA EJA !!!',
+			});
+		
+		** SPREAD OPERATOR (...) E' UN SIMBOLO (I TRE PUNTINI) CHE RAPPRESENTA TUTTI GLI ELEMENTI DI UN ARRAY, SENZA BISOGNO DI ELENCARLI 
+			const mioarray = [5, 6, 7];
+			const nuovoArray = [1, 2, 3, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
+			console.log(nuovoArray);
+			console.log(nuovoArray);			
 			
 		
-			
-	
