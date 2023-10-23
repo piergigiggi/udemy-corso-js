@@ -148,16 +148,48 @@ provaDestr({
 });
 */
 
+/*
+
 const mioarray = [5, 6, 7];
-const nuovoArray = [1, 2, 3, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
+const nuovoArray = [1, 2, 3, 4, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
 console.log(nuovoArray);
 console.log(...nuovoArray); // USO LO SPREAD OPERATOR PER SCRIVERE IN CONSOLE TUTTI I SINGOLI ELEMENTI DELL'ARRAY INVECE CHE L'OGGETTO STESSO
 
-console.log(...mioarray);
+const newArray = [...nuovoArray, 8, 9, 10];
+console.log(newArray);
 
-let prop1 = "aa";
-let prop2 = "bb";
-console.log(prop1, prop2);
-[prop1, prop2] = [prop2, prop1];
-console.log(prop1, prop2);
+const [uno, due, tre, , , , , otto, nove, dieci] = newArray;
+console.log(uno, due, tre, otto, nove, dieci);
 
+// const str = '{ "F": [100, 200, 300], "P": [300, 400] }';
+
+// console.log(F, P);
+
+const newArray2 = [...newArray]; // copia array
+newArray2[0] = 999;
+console.log(...newArray);
+console.log(...newArray2);
+
+const newArray3 = [...newArray, ...newArray2]; //concateno due array
+console.log(newArray3);
+
+const stringa = 'Ciao da';
+const stringa2 = [...stringa, ' ', ...'Giggi']; // CONVERTO STRINGHE IN ARRAY PER CREARE UN ARRAY COMPLESSIVO
+console.log(stringa2);
+console.log(...'diretto', ...stringa);
+
+const obj1 = {
+  prop1: 'ciao',
+  prop2: 'da',
+  prop3: 'giggi',
+};
+
+const obj2 = { ...obj1, prop4: '!!!!' };
+console.log(obj2);
+
+const obj3 = { ...obj2 };
+obj3.prop1 = 'aaa ciao';
+console.log(obj2);
+console.log(obj3);
+
+*/
