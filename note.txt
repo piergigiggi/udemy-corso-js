@@ -630,12 +630,12 @@ statement = istruzione
 			  attr4: 'EJA EJA !!!',
 			});
 		
-		** SPREAD OPERATOR (...) E' UN SIMBOLO (I TRE PUNTINI) CHE RAPPRESENTA TUTTI GLI ELEMENTI DI UN ARRAY, SENZA BISOGNO DI ELENCARLI 
+		** SPREAD OPERATOR (... A DX =) E' UN SIMBOLO (I TRE PUNTINI) CHE RAPPRESENTA TUTTI GLI ELEMENTI DI UN ARRAY, SENZA BISOGNO DI ELENCARLI 
 			I TRE PUNTINI SONO SPREAD QUANDO SONO A DESTRA DELL' = 
 				SE SONO A SINISTRA ALLORA E' REST PATTERN (VEDI CAPITOLO SEGUENTE)
 			E' COME FARE DESTRUCTURING DI UN ARRAY, NEL SENSO CHE "ESTRAE", ESPANDE, TUTTI GLI ELEMENTI DI UN ARRAY, MA SENZA LA POSSIBILITA' DI VALORIZZARE ALTRETTANTE VARIABILI. 
 			FUNZIONA NON SOLO PER GLI ARRAY MA IN GENERALE PER TUTTI GLI ITERABLES JAVASCRIPT (arrays, strings, maps, sets, MA NON OBJECT !)
-			FUNZIONA ANCHE SUGLI ARGOMENTI DI FUNZIONI
+			FUNZIONA ANCHE SUGLI ARGOMENTI DI FUNZIONI: SCOMPONE UN ARRAY PASSATO COME ARGOMENTI IN SINGOLI ELEMENTI 
 			NOTA BENE: LO SPREAD SI PUO' USARE SOLO PER CONVERTIRE ITERABLES E SUGLI ARGOMENTI DI UNA FUNCTION !
 			NOTA BENE2: DA ES 2018 SPREAD SI PUO' USARE ANCHE CON OBJECT, ANCHE SE NON SONO ITERABLES !!
 			
@@ -672,5 +672,54 @@ statement = istruzione
 				
 			const obj3 = { ...obj2 };
 			
-		** REST PATTERN 
-			COME SPREAD, MA AL CONTRARIO: UNISCE VARIABILI IN ARRAY 
+		** REST PATTERN (... A SX =)
+			COME SPREAD, STESSI TRE PUNTINI MA SI USA A SINISTRA DELL = E HA EFFETTO CONTRARIO: UNISCE VARIABILI IN ARRAY. 
+			FUNZIONA ANCHE CON GLI OGGETTI !
+			FUNZIONA ANCHE NELLA DICHIARAZIONE DEGLI ARGOMENTI DI UNA FUNCTION: SIGNIFICA CHE ELEMENTI SINGOLI PASSATI AD UNA FUNCTION, NON IMPORTA QUANTI, VENGONO RAGGRUPPATI IN UN ARRAY 
+			NOTA BENE: REST DEVE ESSERE L'ULTIMO ELEMENTO DEL DESTRUCTURING ALTRIMENTI ERRORE !
+					   CI PUO' ESSERE UN SOLO REST IN UN DESTRUCTURING 
+						
+			const [a, b, ...altro] = [1, 2, 3, 4, 5];	// destructuring in cui a = 1, b = 2 e 3, 4, 5 vengono assegnati all'array altro 
+			
+			const arrayA = ['a', 'b', 'c'];
+			const arrayB = ['d', 'e', 'f'];
+			const [aa, , cc, ...resto] = [...arrayA, ...arrayB];    //combino spread, per unire i due array, e rest, per mettere d, e, f nell'array resto
+			
+			ESEMPIO CON OGGETTI: 
+			let testjson = {	
+			  "E": ["971"],
+			  "C": ["443"],
+			  "F": ["831", "719", "970"],
+			  "G": ["111", "222"]
+			};		
+			const { G, ...objresto } = testjson;    // estraggo E dall'oggetto testjson e tutti gli altri oggetti li metto in objresto			
+			
+			ESEMPIO USO IN FUNCTION 			
+			const add = function (...numbers) {		// dichiaro function che riceve N elementi e li impacca nell'array numbers 
+			  console.log(numbers);
+			}
+			add(1, 2, 3, 4, 5);
+			
+			const x = [1, 2, 3];				
+			add(...x);	// chiamo function add passando gli elementi dell'array x che ottengo facendo lo spread, e quando li riceve la function vengono nuovamente impaccati in array col rest 
+			
+			const testRest = function (primo, ...altri) {	// dichiaro function che accetta un parametro in primo e tutti gli altri nell'array altri
+			  console.log(primo);
+			  console.log(altri);
+			}
+			testRest(1, 2, 3, 4, 5);	// 1 viene assegnato a primo mentre 2,3,4,5 all'array altri 
+			
+		** SHORT CICUITING: && E || OPERATORS (AND E OR) 
+			IN GENERALE GLI OPERATORI BOOLEAN SI POSSONO USARE ANCHE CON VALORI NON BOOLEAN E RESTITUISCONO VALORI NON BOOLEAN 
+			|| (OR) : RESTITUISCE IL PRIMO VALORE TRULY DELL'ELENCO DI VALORI SEPARATO DA || 
+			console.log(undefined || "Ciao")	RESTITUISCE CIAO PERCHE' IL PRIMO VALORE E' FALSY 
+			console.log(undefined || 0 || '' || "Ciao" || 23)	RESTITUISCE CIAO PERCHE I PRIMI TRE SONO FALSY 
+			
+			VIENE UTILE PER RIMPIAZZARE IL TERNARY OPERATOR ( ? .. : ) 
+			INVECE DI FARE COSI'
+				const pippo = pluto ? pluto : "no pluto"; 	// se pluto non e' falsy uso pluto altrimento imposto "no pluto"
+			FACCIO COSI'
+				const pippo = pluto || "no pluto"		// restituisce il primo valore truly, quindi se pluto e' falsy restituisce "no pluto"
+				
+			
+			

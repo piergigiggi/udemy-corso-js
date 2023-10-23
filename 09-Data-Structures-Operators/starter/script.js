@@ -41,7 +41,7 @@ console.log(a, b, c);
 let [primo, , secondo] = restaurant.categories;
 console.log(primo, secondo);
 
-// per scambiare il primo col secondo senza usare una variabile di comodo in cui parcheggiare un valore: 
+// per scambiare il primo col secondo senza usare una variabile di comodo in cui parcheggiare un valore:
 // in pratica creo un array con le due variabili estratte invertendone l'ordine e lo assegno nuovamente alle stesse variabili usando nuovamente il destructuring
 [primo, secondo] = [secondo, primo];
 
@@ -52,7 +52,7 @@ let a = "ciao";
 let b = "pippo";
 console.log(a, b);
 
-//scambio usando destructuring 
+//scambio usando destructuring
 [a, b] = [b, a];
 console.log(a, b);
 
@@ -193,3 +193,78 @@ console.log(obj2);
 console.log(obj3);
 
 */
+
+/*
+let testjson = {
+  "E": ["971"],
+  "C": ["443"],
+  "F": ["831", "719", "970"],
+  "G": ["111", "222"],
+  "storeDefault": "A"
+};
+
+let store_number = "123";
+store_number = store_number.padStart(3, "0");
+console.log("store_number", store_number);
+
+//uso destructoring per separare default da tutto il resto
+const { storeDefault, ...exceptions } = testjson;
+console.log(storeDefault);
+console.log(exceptions);
+
+let found = false;
+for (const key in exceptions) {
+  console.log(key, exceptions[key]);
+  if (exceptions[key].includes(store_number)) {
+    store_number = key + store_number;
+    found = true;
+    console.log("trovato!");
+    break;
+  }
+}
+if (!found) store_number = storeDefault + store_number;
+console.log("new store_number", store_number);
+*/
+
+// const [a, b, ...altro] = [1, 2, 3, 4, 5];	// destructoring in cui a = 1, b = 2 e 3, 4, 5 vengono assegnati all'array altro
+// console.log(a, b);
+// console.log(...altro);
+
+// const arrayA = ['a', 'b', 'c'];
+// const arrayB = ['d', 'e', 'f'];
+
+// const [aa, , cc, ...resto] = [...arrayA, ...arrayB];
+// console.log(aa, cc);
+// console.log(...resto);
+
+// let testjson = {
+//   "E": ["971"],
+//   "C": ["443"],
+//   "F": ["831", "719", "970"],
+//   "G": ["111", "222"]
+// };
+
+// const { G, ...objresto } = testjson;    // estraggo E dall'oggetto testjson e tutti gli altri oggetti li metto in objresto
+// console.log(G);
+// console.log(objresto);
+
+/*
+const add = function (...numbers) {
+  console.log(numbers);
+}
+
+add(1, 2, 3, 4, 5);
+
+const x = [1, 2, 3];
+add(...x);
+
+const testRest = function (primo, ...altri) {
+  console.log(primo);
+  console.log(altri);
+}
+testRest(1, 2, 3, 4, 5);
+*/
+
+const pluto = "aa";
+const pippo = pluto || "no pluto";
+console.log(pippo);
