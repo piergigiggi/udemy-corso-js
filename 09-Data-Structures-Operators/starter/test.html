@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google Maps Example</title>
+</head>
+
+<body>
+    <div id="map" style="width: 400px; height: 300px;"></div>
+
+    <script>
+        // Definisci una funzione di callback che verrà chiamata quando la libreria Google Maps è pronta
+        function initMap() {
+            // Crea un oggetto mappa e imposta le opzioni
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+
+            // Altri codici per personalizzare la mappa
+        }
+    </script>
+
+    <!-- Include la libreria Google Maps con l'attributo async e il parametro di callback -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+
+</html>

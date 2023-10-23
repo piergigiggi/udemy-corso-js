@@ -152,3 +152,12 @@ const mioarray = [5, 6, 7];
 const nuovoArray = [1, 2, 3, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
 console.log(nuovoArray);
 console.log(...nuovoArray); // USO LO SPREAD OPERATOR PER SCRIVERE IN CONSOLE TUTTI I SINGOLI ELEMENTI DELL'ARRAY INVECE CHE L'OGGETTO STESSO
+
+console.log(...mioarray);
+
+let prop1 = "aa";
+let prop2 = "bb";
+console.log(prop1, prop2);
+[prop1, prop2] = [prop2, prop1];
+console.log(prop1, prop2);
+
