@@ -1,0 +1,206 @@
+'use strict';
+
+// Data needed for a later exercise
+const flights =
+  '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
+
+// Data needed for first part of the section
+const restaurant = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+
+  getOrder: function (starterIndex, mainIndex) {
+    return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]]; // restituisco un array di due elementi composto dall'iesimo elemento di starterMenu e l'iesimo elemento di mainMenu
+  },
+
+  openingHours: {
+    thu: {
+      open: 12,
+      close: 22,
+    },
+    fri: {
+      open: 11,
+      close: 23,
+    },
+    sat: {
+      open: 0, // Open 24 hours
+      close: 24,
+    },
+  },
+};
+
+/*
+const array = [1, 2, 3, 4, 5];
+const [a, b, c] = array;
+
+console.log(a, b, c);
+
+let [primo, , secondo] = restaurant.categories;
+console.log(primo, secondo);
+
+// per scambiare il primo col secondo senza usare una variabile di comodo in cui parcheggiare un valore: 
+// in pratica creo un array con le due variabili estratte invertendone l'ordine e lo assegno nuovamente alle stesse variabili usando nuovamente il destructuring
+[primo, secondo] = [secondo, primo];
+
+console.log(primo, secondo);
+*/
+/*
+let a = "ciao";
+let b = "pippo";
+console.log(a, b);
+
+//scambio usando destructuring 
+[a, b] = [b, a];
+console.log(a, b);
+
+//chiamo getOrder e uso destructuring per valorizzare due variabili con il risultato, che è un array di due elementi
+const [starter, menu] = restaurant.getOrder(1, 2);
+console.log(starter, menu);
+
+function prova() {
+  return ["ciao", "da", "giggi"];
+}
+
+const [ciao, da, giggi] = prova();
+console.log(ciao, da, giggi);
+
+// posso fare anche il destructuring nel destructuring, se l'array in input ha un sottoarray
+const listaNum = [1, 2, [3, 4]];
+const [uno, , [tre, quattro]] = listaNum;
+console.log(uno, tre, quattro);   // SALTO IL DUE E ESTRAGGO TRE E QUATTRO CHE STANNO IN UN ARRAY NELL'ARRAY
+*/
+/*
+const { name, categories, mainMenu } = restaurant;
+console.log(name, categories, mainMenu);
+
+const mioObj = {
+  propA: 'ciao',
+  propB: 'da',
+  propC: 'giggi',
+};
+
+const { propA, propB, propC } = mioObj;
+console.log(propA, propB, propC);
+
+// const { propA: property1, propB: property2, propC: property3 } = mioObj;
+// console.log(property3, property2, property1);
+
+const {
+  propA: property1,
+  propB: property2,
+  propertyZZ: giggi = 'forza milan',
+} = mioObj;
+console.log(property1, property2, giggi);
+
+let a = 111;
+let b = 222;
+const obj = { a: 20, b: 30, c: 40 };
+// {
+//   let { a: x, b: y } = obj;
+//   console.log(x, y);
+// }
+({ a, b } = obj);
+console.log(a, b);
+*/
+/*
+const { openingHours } = restaurant;
+console.log(openingHours);
+
+const {
+  fri: { open, close },
+} = openingHours;
+console.log(open, close);
+
+const mioObj = {
+  mioSubObj: {
+    prop1: 10,
+    prop2: 20,
+  },
+};
+
+const {
+  mioSubObj: { prop1: a, prop2: b, c = '999' },
+} = mioObj;
+// console.log(prop1, prop2);
+console.log(a, b, c);
+
+function provaDestr({
+  attr1: a = 'FORZA',
+  attr2: b = 'MILAN',
+  attr3: { uno, due } = { uno: 'DAJE', due: 'MEJO' },
+  attr4 = '!!!',
+}) {
+  console.log(a, b, uno + 'gggg' + due, attr4);
+}
+provaDestr({
+  attr1: 'ciao',
+  attr2: 'da',
+  attr3: {
+    uno: 'gig',
+    due: 'gi',
+  },
+});
+provaDestr({
+  attr4: 'EJA EJA !!!',
+});
+*/
+
+/*
+
+const mioarray = [5, 6, 7];
+const nuovoArray = [1, 2, 3, 4, ...mioarray]; // AGGIUNGO TUTTI GLI ELEMENTI DI mioarray
+console.log(nuovoArray);
+console.log(...nuovoArray); // USO LO SPREAD OPERATOR PER SCRIVERE IN CONSOLE TUTTI I SINGOLI ELEMENTI DELL'ARRAY INVECE CHE L'OGGETTO STESSO
+
+<<<<<<< HEAD
+console.log(...mioarray);
+
+let prop1 = "aa";
+let prop2 = "bb";
+console.log(prop1, prop2);
+[prop1, prop2] = [prop2, prop1];
+console.log(prop1, prop2);
+
+=======
+const newArray = [...nuovoArray, 8, 9, 10];
+console.log(newArray);
+
+const [uno, due, tre, , , , , otto, nove, dieci] = newArray;
+console.log(uno, due, tre, otto, nove, dieci);
+
+// const str = '{ "F": [100, 200, 300], "P": [300, 400] }';
+
+// console.log(F, P);
+
+const newArray2 = [...newArray]; // copia array
+newArray2[0] = 999;
+console.log(...newArray);
+console.log(...newArray2);
+
+const newArray3 = [...newArray, ...newArray2]; //concateno due array
+console.log(newArray3);
+
+const stringa = 'Ciao da';
+const stringa2 = [...stringa, ' ', ...'Giggi']; // CONVERTO STRINGHE IN ARRAY PER CREARE UN ARRAY COMPLESSIVO
+console.log(stringa2);
+console.log(...'diretto', ...stringa);
+
+const obj1 = {
+  prop1: 'ciao',
+  prop2: 'da',
+  prop3: 'giggi',
+};
+
+const obj2 = { ...obj1, prop4: '!!!!' };
+console.log(obj2);
+
+const obj3 = { ...obj2 };
+obj3.prop1 = 'aaa ciao';
+console.log(obj2);
+console.log(obj3);
+
+*/
+>>>>>>> dd3f08e9c13b928345e4b5ce15abb59a119adcd2
