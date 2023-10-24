@@ -73,7 +73,18 @@ BEST PRACTICES
 			  const open = restaurant.openingHours[day]?.open ?? 'closed'; // se property day è presente ritorna open altrimenti ritorna "closed" 
 			  console.log(`${day} - ${open}`);
 			}
-		
+		. PER ITERARE SUGLI OGGETTI: 
+			. Object.keys(oggetto) RESTITUISCE ITERABLE CON I NOMI DELLE PROPERTY
+			. Object.values(oggetto) RESTITUISCE IL VALORE DELLE PROPERTY 
+			. Object.entries(oggetto) RESTITUSCE KEY E VALUE IN UN ARRAY DI ARRAY 
+			. for (const key in oggetto) {
+				console.log(oggetto[key]);
+			  }
+		. PER RIMUOVERE DUPLICATI DA ARRAY USARE new Set(array) E RICONVERTIRE IN ARRAY 
+			const arrayConDuplicati = ['aa', 'bb', 'aa', 'bb', 'cc'];
+			const arrayUnique = [...new Set(arrayConDuplicati)];    //creo Set dell'array con duplicati e con l'operatore Spread lo espando in un array
+		. CONVERTIRE OGGETTO IN MAP CON Object.entries(oggetto)
+			const objToMap = new Map(Object.entries(restaurant.openingHours));
 
 NOTA BENE: IN GULP IL CHECK DELLA VERSIONE VIENE FATTO DA BABEL, CON FALLBACK PER GESTIRE CODICE IN VECCHI BROWSER. APPROFONDIRE. 
 
@@ -876,3 +887,106 @@ statement = istruzione
 				for (const [key, { open, close }] of entries) {		// uso destructuring dell'array e poi dell'oggetto in value
 				  console.log(key, open, close);
 				}
+				
+			* NOTA BENE: ALTRO MODO NON SPIEGATO DAL CORSO: 
+				const stores = {
+				  "E": ["971"],
+				  "C": ["443"],
+				  "F": ["831", "719", "970"]
+				};
+
+				for (const key in stores) {
+				  console.log(key, ...stores[key]);
+				}
+				
+	** SETS 
+		COLLECTION DI UNIQUE VALUES, NIENTE DUPLICATI. 
+		SIMILE AGLI ARRAY, NIENTE KEYS, SUPPORTA ITERABLE, QUINDI ANCHE SET DI STRINGHE (LI SCOMPONE IN CARATTERI UNIVOCI)
+		NON C'E' IL GET ! PERCHE' I SET NON SONO ARRAY, L'ORDINE NON E' IMPORTANTE.
+		ESTREMAMENTE PERFORMANTI, FINO AL 10 VOLTE PIU' VELOCI DEGLI ARRAY !
+		MIGLIORE USE CASE: ELIMINARE DUPLICATI DA ARRAY
+			const ordersSet = new Set(['ciao', 'da', 'giggi', 'da', 'giggi']);
+			console.log(ordersSet);   // doppioni eliminati !
+			
+			const giggi = new Set('giggi');
+			console.log(giggi);   //restituisce 'g' 'i'
+		DIMENSIONE: 
+			ordersSet.size 		
+		CHECK PRESENZA ELEMENTO 
+			ordersSet.has('da') //torna true o false 
+		AGGIUNGERE ELEMENTO 
+			ordersSet.add('forza')
+		ELIMINARE ELEMENTO 
+			ordersSet.delete('giggi')
+		SVUOTARE IL SET 
+			ordersSet.clear();
+		ITERARE
+			for (const order of ordersSet) 
+				console.log(order)
+		USARE PER ELIMINARE DUPLICATI DA ARRAY IN ARRAY
+			const arrayConDuplicati = ['aa', 'bb', 'aa', 'bb', 'cc'];
+			const arrayUnique = [...new Set(arrayConDuplicati)];    //creo Set dell'array con duplicati e con l'operatore Spread lo espando in un array 		
+		CONTARE QUANTI VALORI UNIQUE HA UN ARRAY 
+			const numUnique = new Set(['ciao', 'da', 'giggi', 'da', 'giggi']).size;
+			
+	** MAPS 
+		PER MAPPARE VALUES TO KEYS, COME GLI OGGETTI, MA SONO MOLTO MEGLIO, INFATTI KEY PUO' ESSERE DI QUALUNQUE TIPO, ANCHE BOOLEAN 
+		SONO PIU' PERFORMANTI DEGLI OBJECT !
+			NOTA BENE: KEY BOOLEAN TRUE E FALSE IN UN SET POSSONO ESSERE UTILI PER FARE GET IN BASE A RISULTATO BOOLEAN DI UN ESPRESSIONE: SE TRUE RITORNO UN VALORE DAL MAP, SE FALSE UN ALTRO 
+		ISTANZIARE MAP VUOTO
+			const rest = new Map();
+		AGGIUNGERE ELEMENTO
+			rest.set("ciao", "da giggi");
+			rest.set(1, "forza");
+			console.log(rest.set(2, "milan"));	// set ritorna ogni volta il contenuto del Map, quindi posso concatenare istruzioni set 
+			console.log(rest.set("lista", [1, 2, 3]).set("altro", { nome: "giggi", email: "giggi@tin.it" }));
+		AGGIUNGERE ELEMENTI USANDO IN INPUT UN ARRAY DI ARRAY DI DUE DIMENSION (KEY, VALUE)  
+			const rest = new Map([
+			  ["primo", "primo elemento"],
+			  ["secondo", "secondo elemento"],
+			])			
+			NOTA BENE: L'ARRAY E' LO STESSO RESTITUITO DA Object.entries(oggetto) PER CUI SI PUO' CONVERTIRE UN OGGETTO IN MAP: 
+			const objToMap = new Map(Object.entries(restaurant.openingHours));
+			console.log(objToMap.get("thu"));
+		GET 
+			console.log("ciao", rest.get("ciao"));
+			console.log(question.get(question.get('correct') === scelta));	// get di un boolean risultante dall'espressione ===, perchè in question c'è sia un entry con true che con false 
+		CHECK PRESENZA ELEMENTO 
+			rest.has("ciao");
+		ELIMINARE ELEMENTO 
+			rest.delete("ciao");
+		DIMENSIONE: 
+			rest.size 
+		SVUOTARE IL MAP 
+			rest.clear();
+		USARE ARRAY COME KEY: DEVO DEFINIRE L'ARRAY IN UNA VARIABILE CHE POI USO SIA NEL SET CHE NEL GET, ALTRIMENTI NON FUNZIONA PERCHE' USERO' DUE OGGETTI ARRAY DIVERSI 
+			const arr = [1, 2];
+			rest.set(arr, "ciao");    //aggiungo elemento con chiave = array di due elementi 
+			console.log(rest.get(arr));           // ottengo "ciao"
+		USARE OGGETTI COME KEY 
+			rest.set(document.querySelector("h1"), "intestazione H1");
+			console.log(rest);
+		ITERARE, SUPPORTA ITERABLE E QUINDI FOR..OF 
+			const question = new Map([
+			  ['question', 'What is the best programming language in the world?'],
+			  [1, 'C'],
+			  [2, 'Java'],
+			  [3, 'JavaScript'],
+			  ['correct', 3],
+			  [true, 'Correct 🎉'],
+			  [false, 'Try again!'],
+			]);		
+			for (const [key, value] of question) {
+			  if (typeof key === 'number') console.log(key, value);
+			}
+		CONVERTIRE OGGETTO IN MAP 
+			const objToMap = new Map(Object.entries(restaurant.openingHours));
+		CONVERTIRE MAP IN ARRAY 
+			const mapToArray = [...question];		
+		ITERARE SULLE KEY
+			mappa.keys()							
+		ITERARE SUI VALUES 
+			mappa.values()
+		ITERARE SULLE ENTRIES 
+			mappa.entries()
+				

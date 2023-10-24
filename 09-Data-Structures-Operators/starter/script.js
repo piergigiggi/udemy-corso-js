@@ -290,46 +290,7 @@ testRest(1, 2, 3, 4, 5);
 
 // obj2.a &&= 'pippo'; // assegno 'pippo' se obj2.a è già valorizzato
 // console.log(obj2);
-const game = {
-  team1: 'Bayern Munich',
-  team2: 'Borrussia Dortmund',
-  players: [
-    [
-      'Neuer',
-      'Pavard',
-      'Martinez',
-      'Alaba',
-      'Davies',
-      'Kimmich',
-      'Goretzka',
-      'Coman',
-      'Muller',
-      'Gnarby',
-      'Lewandowski',
-    ],
-    [
-      'Burki',
-      'Schulz',
-      'Hummels',
-      'Akanji',
-      'Hakimi',
-      'Weigl',
-      'Witsel',
-      'Hazard',
-      'Brandt',
-      'Sancho',
-      'Gotze',
-    ],
-  ],
-  score: '4:0',
-  scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
-  date: 'Nov 9th, 2037',
-  odds: {
-    team1: 1.33,
-    x: 3.25,
-    team2: 6.5,
-  },
-};
+
 
 /*
 // const players1 = game.players[0];
@@ -422,9 +383,224 @@ for (const day of Object.keys(restaurant.openingHours)) {
 const values = Object.values(restaurant.openingHours);
 console.log(values);
 */
+
+/*
 const openingHours = restaurant.openingHours;
 
 const entries = Object.entries(openingHours);
 for (const [key, { open, close }] of entries) {
   console.log(key, open, close);
 }
+
+
+const stores = {
+  "E": ["971"],
+  "C": ["443"],
+  "F": ["831", "719", "970"]
+};
+
+for (const key in stores) {
+  console.log(key, ...stores[key]);
+}
+*/
+
+/*
+const game = {
+  team1: 'Bayern Munich',
+  team2: 'Borrussia Dortmund',
+  players: [
+    [
+      'Neuer',
+      'Pavard',
+      'Martinez',
+      'Alaba',
+      'Davies',
+      'Kimmich',
+      'Goretzka',
+      'Coman',
+      'Muller',
+      'Gnarby',
+      'Lewandowski',
+    ],
+    [
+      'Burki',
+      'Schulz',
+      'Hummels',
+      'Akanji',
+      'Hakimi',
+      'Weigl',
+      'Witsel',
+      'Hazard',
+      'Brandt',
+      'Sancho',
+      'Gotze',
+    ],
+  ],
+  score: '4:0',
+  scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
+  date: 'Nov 9th, 2037',
+  odds: {
+    team1: 1.33,
+    x: 3.25,
+    team2: 6.5,
+  },
+};
+
+for (const [i, player] of game.scored.entries()) {
+  console.log(`Goal ${i + 1}: ${player}`);
+}
+
+let sum = 0;
+const values = Object.values(game.odds);
+for (const value of values) sum += value;
+console.log(`average odd: ${sum / values.length}`);
+
+const entries = Object.entries(game.odds);
+for (const [key, value] of entries) {
+  console.log(`Odd of ${(game[key] && 'victory ' + game[key]) || 'draw'}: ${value}`);
+}
+
+const scorers = {};
+
+for (const player of game.scored) {
+  const score = scorers[player] ?? 0;
+  scorers[player] = score + 1;
+}
+console.log(scorers);
+*/
+
+/*
+const ordersSet = new Set(['ciao', 'da', 'giggi', 'da', 'giggi']);
+console.log(ordersSet);   // doppioni eliminati !
+
+ordersSet.add("forza");
+ordersSet.delete("giggi");
+//ordersSet.clear();
+console.log(ordersSet);
+
+for (const order of ordersSet)
+  console.log(order)
+
+const arrayConDuplicati = ['aa', 'bb', 'aa', 'bb', 'cc'];
+const arrayUnique = [...new Set(arrayConDuplicati)];    //creo Set dell'array con duplicati e con l'operatore Spread lo espando in un array 
+console.log(arrayUnique);
+
+*/
+
+/*
+const rest = new Map();
+rest.set("ciao", "da giggi");
+rest.set(1, "forza");
+console.log(rest.set(2, "milan"));
+console.log(rest.set("lista", [1, 2, 3]).set("altro", { nome: "giggi", email: "giggi@tin.it" }));
+rest
+  .set('open', 11)
+  .set('open', 23)
+  .set(true, 'we are open :D')
+  .set(false, 'we are close :(');
+
+console.log("ciao", rest.get("ciao"));
+
+const arr = [1, 2];
+rest.set(arr, "ciao");    //aggiungo elemento con chiave = array di due elementi 
+console.log(rest.get(arr));           // ottengo "ciao"
+
+rest.set(document.querySelector("h1"), "intestazione H1");
+console.log(rest);
+
+*/
+/*
+const rest = new Map([
+  ["primo", "primo elemento"],
+  ["secondo", "secondo elemento"],
+]);
+console.log(rest);
+
+const objToMap = new Map(Object.entries(restaurant.openingHours));
+console.log(objToMap);
+console.log(objToMap.get("thu"));
+*/
+/*
+const question = new Map([
+  ['question', 'What is the best programming language in the world?'],
+  [1, 'C'],
+  [2, 'Java'],
+  [3, 'JavaScript'],
+  ['correct', 3],
+  [true, 'Correct 🎉'],
+  [false, 'Try again!'],
+]);
+
+// Quiz app
+console.log(question.get("question"));
+for (const [key, value] of question) {
+  if (typeof key === 'number') console.log(`Answer ${key}: ${value}`);
+}
+const scelta = Number(prompt("Your answer"));
+console.log(scelta);
+console.log(question.get(question.get('correct') === scelta));
+
+*/
+/*
+const question = new Map([
+  ['question', 'What is the best programming language in the world?'],
+  [1, 'C'],
+  [2, 'Java'],
+  [3, 'JavaScript'],
+  ['correct', 3],
+  [true, 'Correct 🎉'],
+  [false, 'Try again!'],
+]);
+
+// riconvertire Map in array
+const mapToArray = [...question];
+console.log(mapToArray);
+
+*/
+/*
+let testjson = {
+  "E": ["971"],
+  "C": ["443"],
+  "F": ["831", "719", "970"],
+  "G": ["111", "222"]
+};
+
+let store = "1";
+//converto obj in Map per poi iterare 
+const objToMap = new Map(Object.entries(testjson));
+for (const [key, value] of objToMap) {
+  //console.log(key, value);
+  value.includes(store) && (store = key + store)
+}
+console.log(store);
+*/
+
+const gameEvents = new Map([
+  [17, '⚽️ GOAL'],
+  [36, '🔁 Substitution'],
+  [47, '⚽️ GOAL'],
+  [61, '🔁 Substitution'],
+  [64, '🔶 Yellow card'],
+  [69, '🔴 Red card'],
+  [70, '🔁 Substitution'],
+  [72, '🔁 Substitution'],
+  [76, '⚽️ GOAL'],
+  [80, '⚽️ GOAL'],
+  [92, '🔶 Yellow card'],
+]);
+
+const events = [...new Set(gameEvents.values())];
+console.log(events);
+gameEvents.delete(64);
+console.log(gameEvents);
+
+//let average = 0;
+// for (const key of gameEvents.keys()) average += key;
+// console.log(`An event happened, on average, every ${average / 90} minutes`);
+console.log(`An event happened, on average, every ${90 / gameEvents.size} minutes`);
+
+// BONUS rimuovo 92 e ricalcolo
+const time = [...gameEvents.keys()].pop();  // converto in array e con pop ottengo 92, la lunghezza reale della partita
+console.log(`An event happened, on average, every ${time / gameEvents.size} minutes`);
+
+for (const [key, value] of gameEvents) console.log(`${key <= 45 ? '[FIRST' : '[SECOND'} HALF] ${key}: ${value} `);
