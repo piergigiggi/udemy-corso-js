@@ -46,6 +46,34 @@ BEST PRACTICES
 				console.log(uno, tre, quattro);   // SALTO IL DUE E ESTRAGGO TRE E QUATTRO CHE STANNO IN UN ARRAY NELL'ARRAY		
 		. USARE DESTRUCTURING DI OGGETTO AL POSTO DI LISTA DI ARGOMENTI IN UNA FUNCTION QUANDO NE HA PARECCHI 
 		. USARE SPREAD OPERATOR PER FARE COPIE DI OGGETTI E ANCHE AGGIUNGERE PROPERTY 
+			const obj1 = {
+			  prop1: 'ciao',
+			  prop2: 'da',
+			  prop3: 'giggi',
+			};
+			const obj2 = { ...obj1, prop4: '!!!!' };			
+		. USARE REST OPERATOR PER ESTRARRE PROPERTY DA OGGETTO E COPIARE TUTTE LE ALTRE PROPERTI IN UN ALTRO 
+			const { G, ...objresto } = testjson;    // estraggo E dall'oggetto testjson e tutti gli altri oggetti li metto in objresto
+		. USARE REST OPERATOR IN FUNCTION PER ACCETTARE N ELEMENTI 
+			const add = function (...numbers) {		// dichiaro function che riceve N elementi e li impacca nell'array numbers 
+			  console.log(numbers);
+			}
+			add(1, 2, 3, 4, 5);		
+			add(1, 2, 3, 4, 5,6, 7,8, 9, 10);
+		. USARE OR SHORT CIRCUITING AL POSTO DI TERNARY OPERATOR. MA NON FUNZIONA CON NUMERI ! LO ZERO VIENE VISTO COME FALSY ! USARE INVECE ?? OPERATOR (MA SOLO DA ES2020)
+			const ciao = pippo || "ciao"; 	// se pippo è truly torna pippo altrimenti torna "ciao" 
+			const ciao2 = pippo ?? "ciao";  // se pippo è truly torna pippo, anche se zero !, altrimenti torna "ciao"
+			const forza = undefined || null || '' || 0 || NaN || "forza"; // torna forza 
+		. USARE AND SHORT CIRCUITING PER INVOCARE FUNZIONI SOLO SE ESISTONO 
+			addProduct && addProduct("product");	//se primo e' truly va avanti e esegue funzione, altrimenti se false si ferma e non esegue niente
+		. USARE OPTIONAL CHAINING E NULLISH COALES.. OPERATOR PER COMBINARE TEST DI ESISTENZA (NOT UNDEFINED, NOT NULL) E VALORE DI DEFAULT
+			const days = ['mon', 'tue', 'thu', 'wed', 'fri', 'sat', 'sun'];
+			console.log('🎉 Orari Apertura 🎉');
+			for (const day of days) {
+			  const open = restaurant.openingHours[day]?.open ?? 'closed'; // se property day è presente ritorna open altrimenti ritorna "closed" 
+			  console.log(`${day} - ${open}`);
+			}
+		
 
 NOTA BENE: IN GULP IL CHECK DELLA VERSIONE VIENE FATTO DA BABEL, CON FALLBACK PER GESTIRE CODICE IN VECCHI BROWSER. APPROFONDIRE. 
 
@@ -137,6 +165,8 @@ Truthy e Falsy values: E' IL CONCETTO CHE FA FUNZIONARE L'IF(VARIABILE) !!
 	truthy = sono tutti gli altri valori, cioè tutti i numeri non zero e le stringhe non vuote e gli oggetti anche vuoti ({})
 		Boolean({}) true (empty object) 
 	NOTA: non serve convertire con Boolean perché JS applica Coercion e lo fa implicitamente. 
+
+Nota bene: Da ES2020 ci sono anche i Nullish Value: solo null e undefined, usati con l'operator ?? 
 	
 Equality Operators 
 	=== strict equality operator, confronta senza fare prima type coercion cioè senza fare auto conversion 	USARE QUESTO !!!! EVITA BUG 
@@ -709,17 +739,140 @@ statement = istruzione
 			}
 			testRest(1, 2, 3, 4, 5);	// 1 viene assegnato a primo mentre 2,3,4,5 all'array altri 
 			
-		** SHORT CICUITING: && E || OPERATORS (AND E OR) 
-			IN GENERALE GLI OPERATORI BOOLEAN SI POSSONO USARE ANCHE CON VALORI NON BOOLEAN E RESTITUISCONO VALORI NON BOOLEAN 
-			|| (OR) : RESTITUISCE IL PRIMO VALORE TRULY DELL'ELENCO DI VALORI SEPARATO DA || 
-			console.log(undefined || "Ciao")	RESTITUISCE CIAO PERCHE' IL PRIMO VALORE E' FALSY 
-			console.log(undefined || 0 || '' || "Ciao" || 23)	RESTITUISCE CIAO PERCHE I PRIMI TRE SONO FALSY 
+	** SHORT CICUITING: && E || OPERATORS (AND E OR) 
+		IN GENERALE GLI OPERATORI BOOLEAN SI POSSONO USARE ANCHE CON VALORI NON BOOLEAN E RESTITUISCONO VALORI NON BOOLEAN 
+		|| (OR) : RESTITUISCE IL PRIMO VALORE TRULY DELL'ELENCO DI VALORI SEPARATO DA || 
+		console.log(undefined || "Ciao")	RESTITUISCE CIAO PERCHE' IL PRIMO VALORE E' FALSY 
+		console.log(undefined || 0 || '' || "Ciao" || 23)	RESTITUISCE CIAO PERCHE I PRIMI TRE SONO FALSY 
+		
+		VIENE UTILE PER RIMPIAZZARE IL TERNARY OPERATOR ( ? .. : ) NELL'ASSEGNARE VALORE A VARIABILE
+		INVECE DI FARE COSI'
+			const pippo = pluto ? pluto : "no pluto"; 	// se pluto non e' falsy uso pluto altrimento imposto "no pluto"
+		FACCIO COSI'
+			const pippo = pluto || "no pluto"		// restituisce il primo valore truly, quindi se pluto e' falsy restituisce "no pluto"
+		MA ATTENZIONE, SE VALORE E' ZERO E' FALSY E QUINDI MI TORNA L'ALTRO !!! QUINDI CON I NUMBER IL SHORT CIRCUITING NON FUNZIONA COSI' COM'E' ! USARE INVECE ?? OPERATOR (VEDI SOTTO, SOLO DA ES2020!)
+		
+		&& (AND) : CONTRARIO DI OR, SE PRIMO VALORE E' FALSY LO RESTITUISCE SUBITO (NON HA SENSO CONTROLLARE GLI ALTRI PERCHE' IN UN "AND" BASTA UN FALSE PER METTERE TUTTO A FALSE) ALTRIMENTI PASSA ALL'ALTRO E COSI' VIA 
+			const pippo = 0 && "ciao"; RESTITUISCE 0 PERCHE' FALSY 
+		VIENE UTILE PER TESTARE SE UNA FUNZIONE ESISTE PRIMA DI INVOCARLA OPPURE PER VALORIZZARE UNA VARIABILE CON UN VALORE SE E' GIA' VALORIZZATA 
+		INVECE DI FARE COSI': 
+			if (aggiungiProdotto) {
+				aggiungiProdotto("martello");
+			}
+		FACCIO COSI': 
+			aggiungiProdotto && aggiungiProdotto("martello");	//SE IL PRIMO TERMINE DA' FALSY (PER ESEMPIO UNDEFINED PERCHE' LA FUNZIONE NON E' STATA DICHIARATA) L'EVALUATION DELL'ISTRUZIONE SI FERMA E NON ESEGUE LA FUNZIONE. ALTRIMENTI ESEGUE LA FUNZIONE. 
+	
+	** (ES2020) NULLISH COALESCING OPERATOR ?? 
+		SI BASA SUL CONCETTO DI "NULLISH VALUE" = NULL, UNDEFINED (E BASTA!) 
+			let pluto = 0;
+			const pippo = pluto ?? 'no pluto';	// torna 0 perchè non è un nullish value, quindi è truthy
 			
-			VIENE UTILE PER RIMPIAZZARE IL TERNARY OPERATOR ( ? .. : ) 
-			INVECE DI FARE COSI'
-				const pippo = pluto ? pluto : "no pluto"; 	// se pluto non e' falsy uso pluto altrimento imposto "no pluto"
-			FACCIO COSI'
-				const pippo = pluto || "no pluto"		// restituisce il primo valore truly, quindi se pluto e' falsy restituisce "no pluto"
+	** (ES2021) LOGICAL ASSIGNMENT OPERATORS 
+		PER OR OPERATOR C'E' FORMATO ASSEGNAZIONE ACCORCIATO ||= 	EQUIVALE A variabile = variabile || altrovalore;
+		PER ?? OPERATOR C'E' FORMATO ASSEGNAZIONE ACCORCIATO ??= 	EQUIVALE A variabile = variabile || altrovalore; MA FUNZIONA ANCHE CON ZERO !!
+		PER && OPERATOR C'E' &&= 	EQUIVALE A variabile = variabile && altrovalore; //assegna altrovalore se variabile è truthy
+			const obj1 = {
+			  a: 'ciao',
+			  b: 0,
+			};
+
+			const obj2 = {
+			  a: 'ciao',
+			};
+
+			// uso logical assignment operator per assicurarmi che entrambi gli oggetti abbiamo property b
+
+			// obj1.b ||= 10; // forma stringata di obj1.b = obj1.b || 10, ma attenzione non funziona se b = 0
+			// obj2.b ||= 10;
+			obj1.b ??= 10; // forma stringata di obj1.b = obj1.b ?? 10, nullish value quindi funziona con 0
+			obj2.b ??= 10;
+			console.log(obj1);
+			console.log(obj2);
+			
+	** FOR-OF LOOP ON ARRAYS 
+		VERSIONE SEMPLIFICATA DEL CICLO FOR SU UN ARRAY, NON SERVE INDICE ECC.. 
+		SONO SUPPORTATI BREAK E CONTINUE !
+			for (const elemento of array) {		//IN ELEMENTO HO L'ELEMENTO CORRENTE DI OGNI ITERAZIONE DEL LOOP 
+				console.log(elemento);
+			}
+		PER AVERE ANCHE INDICE OLTRE A VALORE: 
+			for (const item of array.entries()) {	// IN ITEM HO UN ARRAY DI 2 ELEMENTI IN CUI IL PRIMO E' L'INDICE E IL SECONDO IL VALORE 
+				console.log(item);
+			}
+			for (const [i, valore] of array.entries()) {	// USO DESTRUCTURING PER ESTRARRE CIASCUN ELEMENTO DELL'ARRAY DI OGNI ENTRY IN UNA VARIABILE APPOSITA
+				console.log(i+1, valore);
+			}			
+			
+	** (ES6) ENHANCED OBJECT LITERALS 
+		. PER DICHIARARE UNA PROPERTY DI OGGETTO = ALTROOGGETTO DICHIARATO PRIMA
+				const objfuori = {
+				...
+				}		
+			INVECE CHE 
+				const obj = {
+					...
+					objfuori: objfuori,					
+				}
+			POSSO ABBREVIARE: 
+				const obj = {
+					...
+					objfuori,
+				}
+		. DICHIARAZIONE ABBREVIATA METODO: 
+				const obj = {
+					...
+					addProduct(a, b) {		// SENZA : function
+					}
+				}
+		. COMPOSIZIONE DEL NOME DELLA PROPERTY 
+			INVECE CHE AVERE IL NOME DELLA PROPERTY FISSO POSSO COMPORLO TRA PARENTESI QUADRE USANDO ``, ARRAY, CONCATENANDO ECC.. 
+				const obj = {
+					...
+					[`property${1+1}`]: "ciao",
+					
+				}				
+	
+	** OPTIONAL CHAINING ?.
+		? MESSO DOPO OGGETTO, ESEGUE QUANTO SCRITTO DOPO IL PUNTO SOLO SE OGGETTO NON NULLABLE (NON UNDEFINED E NON NULL). FUNZIONA SIA CON PROPERTY/OGGETTI CHE CON FUNCTION CHE CON ARRAY !
+			const obj = {
+			  a: {
+				logga(uno, due) {
+				  console.log(uno, due);
+				},
+			  },
+			  b: {
+				c: 'ciao',
+			  },
+			};
+			obj.a.logga(1, 2);
+			obj.b.logga?.(1, 2); //eseguo logga solo se non undefined e non null
+			obj.c?.logga(1, 2); //eseguo logga solo se c non undefined e non null		
+			
+			const days = ['mon', 'tue', 'thu', 'wed', 'fri', 'sat', 'sun'];
+			console.log('🎉 Orari Apertura 🎉');
+			for (const day of days) {
+			  const open = restaurant.openingHours[day]?.open ?? 'closed';		// se property day è presente ritorna open altrimenti ritorna "closed" 
+			  console.log(`${day} - ${open}`);
+			}			
+			
+			
+			const users = [{ name: 'Giggi', email: 'giggi@giggi.it' }];		
+			console.log(users[1]?.name ?? 'non esiste');			// esempio con array 
+			
+	** LOOPING OBJECTS 
+		OBJECT NON SONO ITERABLE, COME GLI ARRAY, MA POSSO ITERARE IN MODO INDIRETTO SULLE KEY, SUI VALUE E SU ENTRAMBI. 
+			* ITERARE SULLE KEY
+				for (const day of Object.keys(openingHours)){
+				  console.log(day);
+				}				
+				const properties = Object.keys(openingHours); 	// Object.keys restituisce array con i nomi delle property dell'oggetto in input 
+				console.log(`ci sono ${properties.length} property`);
 				
-			
-			
+			* ITERARE SUI VALUES 
+				const values = Object.values(openingHours);
+				
+			* ITERARE SU ENTRAMBI, CIOE' SUGLI ENTRIES 
+				const entries = Object.entries(openingHours);	// restituisce array di array di 2 elementi: chiave e valore 
+				for (const [key, { open, close }] of entries) {		// uso destructuring dell'array e poi dell'oggetto in value
+				  console.log(key, open, close);
+				}

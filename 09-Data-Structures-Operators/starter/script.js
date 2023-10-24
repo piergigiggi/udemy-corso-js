@@ -265,6 +265,166 @@ const testRest = function (primo, ...altri) {
 testRest(1, 2, 3, 4, 5);
 */
 
-const pluto = "aa";
-const pippo = pluto || "no pluto";
-console.log(pippo);
+// let pluto = 0;
+// //const pippo = pluto || 'no pluto';
+// const pippo = pluto ?? 'no pluto';
+// console.log(pippo);
+
+// const obj1 = {
+//   a: 'ciao',
+//   b: 0,
+// };
+
+// const obj2 = {
+//   a: 'ciao',
+// };
+
+// // uso logical assignment operator per assicurarmi che entrambi gli oggetti abbiamo property b
+
+// // obj1.b ||= 10; // forma stringata di obj1.b = obj1.b || 10, ma attenzione non funziona se b = 0
+// // obj2.b ||= 10;
+// obj1.b ??= 10; // forma stringata di obj1.b = obj1.b ?? 10, nullish value quindi funziona con 0
+// obj2.b ??= 10;
+// console.log(obj1);
+// console.log(obj2);
+
+// obj2.a &&= 'pippo'; // assegno 'pippo' se obj2.a è già valorizzato
+// console.log(obj2);
+const game = {
+  team1: 'Bayern Munich',
+  team2: 'Borrussia Dortmund',
+  players: [
+    [
+      'Neuer',
+      'Pavard',
+      'Martinez',
+      'Alaba',
+      'Davies',
+      'Kimmich',
+      'Goretzka',
+      'Coman',
+      'Muller',
+      'Gnarby',
+      'Lewandowski',
+    ],
+    [
+      'Burki',
+      'Schulz',
+      'Hummels',
+      'Akanji',
+      'Hakimi',
+      'Weigl',
+      'Witsel',
+      'Hazard',
+      'Brandt',
+      'Sancho',
+      'Gotze',
+    ],
+  ],
+  score: '4:0',
+  scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
+  date: 'Nov 9th, 2037',
+  odds: {
+    team1: 1.33,
+    x: 3.25,
+    team2: 6.5,
+  },
+};
+
+/*
+// const players1 = game.players[0];
+// const players2 = game.players[1];
+const [players1, players2] = game.players;
+console.log(players1);
+console.log(players2);
+
+const [gk, ...fieldPlayers] = players1;
+console.log(gk);
+console.log(fieldPlayers);
+
+const allPlayers = [...players1, ...players2];
+console.log(allPlayers);
+
+const players1Final = [...players1, 'Thiago', 'Coutinho', 'Perisic'];
+console.log(players1Final);
+
+const { team1, x: draw, team2 } = game.odds;
+console.log(team1, draw, team2);
+
+const printGoals = function (...playerNames) {
+  console.log(...playerNames);
+  console.log(playerNames.length);
+};
+
+printGoals('Davies', 'Muller', 'Lewandowski', 'Kimmich');
+
+printGoals(...game.scored);
+
+console.log();
+
+team1 < team2 && console.log('team1 meglio di team2');
+team2 > team1 && console.log('team2 meglio di team1');
+
+*/
+/*
+const array = ['a', 'b', 'c', 'd', 'e'];
+for (const elemento of array) {
+  console.log(elemento);
+}
+for (const [i, valore] of array.entries()) {
+  console.log(i + 1, valore);
+}
+
+*/
+/*
+const c = {
+  logga(uno, due) {
+    console.log(uno, due);
+  },
+};
+
+const obj = {
+  a: {
+    logga(uno, due) {
+      console.log(uno, due);
+    },
+  },
+  b: {
+    c: 'ciao',
+  },
+  c,
+};
+
+obj.a.logga(1, 2);
+obj.b.logga?.logga(1, 2); //eseguo logga solo se non undefined e non null
+obj.c?.logga(1, 2); //eseguo logga solo se non undefined e non null
+*/
+
+/*
+const days = ['mon', 'tue', 'thu', 'wed', 'fri', 'sat', 'sun'];
+console.log('🎉 Orari Apertura 🎉');
+for (const day of days) {
+  const open = restaurant.openingHours[day]?.open ?? 'closed';
+  console.log(`${day} - ${open}`);
+}
+
+*/
+
+/*
+const users = [{ name: 'Giggi', email: 'giggi@giggi.it' }];
+console.log(users[1]?.name ?? 'non esiste');
+*/
+/*
+for (const day of Object.keys(restaurant.openingHours)) {
+  console.log(day);
+}
+
+const values = Object.values(restaurant.openingHours);
+console.log(values);
+*/
+const openingHours = restaurant.openingHours;
+
+const entries = Object.entries(openingHours);
+for (const [key, { open, close }] of entries) {
+  console.log(key, open, close);
+}
