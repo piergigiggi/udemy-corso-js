@@ -60,7 +60,7 @@ BEST PRACTICES
 			}
 			add(1, 2, 3, 4, 5);		
 			add(1, 2, 3, 4, 5,6, 7,8, 9, 10);
-		. USARE OR SHORT CIRCUITING AL POSTO DI TERNARY OPERATOR. MA NON FUNZIONA CON NUMERI ! LO ZERO VIENE VISTO COME FALSY ! USARE INVECE ?? OPERATOR (MA SOLO DA ES2020)
+		. USARE OR SHORT CIRCUITING AL POSTO DI TERNARY OPERATOR PER INIZIALIZZARE VARIABILI. MA NON FUNZIONA CON NUMERI ! LO ZERO VIENE VISTO COME FALSY ! USARE INVECE ?? OPERATOR (MA SOLO DA ES2020)
 			const ciao = pippo || "ciao"; 	// se pippo è truly torna pippo altrimenti torna "ciao" 
 			const ciao2 = pippo ?? "ciao";  // se pippo è truly torna pippo, anche se zero !, altrimenti torna "ciao"
 			const forza = undefined || null || '' || 0 || NaN || "forza"; // torna forza 
@@ -84,7 +84,32 @@ BEST PRACTICES
 			const arrayConDuplicati = ['aa', 'bb', 'aa', 'bb', 'cc'];
 			const arrayUnique = [...new Set(arrayConDuplicati)];    //creo Set dell'array con duplicati e con l'operatore Spread lo espando in un array
 		. CONVERTIRE OGGETTO IN MAP CON Object.entries(oggetto)
-			const objToMap = new Map(Object.entries(restaurant.openingHours));
+			const objToMap = new Map(Object.entries(restaurant.openingHours));			
+		. RICORDARSI CHE QUANDO DEFINISCO UN OGGETTO POSSO DICHIARARE DELLE PROPERTY UGUALI AD ALTRE NELLO STESSO SCOPE, SEMPLICEMENTE SCRIVENDONE IL NOME E POI VIRGOLA, SENZA QUINDI : ... 
+			const createBooking = function (flightNumber, numPassengers, price) {
+				const booking = {
+					flightNumber,
+					numPassengers,
+					price,
+				}
+			}
+		. ROBE UTILI SU FUNCTIONS: 
+			PROPERTY name NOME FUNCTION PASSATA COME PARAMETRO 
+			PROPERTY length NUMERO PARAMETRI FUNCTION 
+		. RICORDARSI DEL METODO CALL DELLE FUNCTION E DEL THIS 
+			const method = function (nome) {
+				console.log(`${this.prop1} ${nome}`);
+			}
+			const oggetto1 = {
+				prop1: "ciao"
+			}
+			const oggetto2 = {
+				prop1: "forza"
+			}
+			method.call(oggetto1, "oggetto1 !");
+			method.call(oggetto2, "oggetto2 !");		
+			
+		
 
 NOTA BENE: IN GULP IL CHECK DELLA VERSIONE VIENE FATTO DA BABEL, CON FALLBACK PER GESTIRE CODICE IN VECCHI BROWSER. APPROFONDIRE. 
 
@@ -352,6 +377,7 @@ statement = istruzione
 		console.error;
 		console.table (ottimo per oggetti) 
 		debugger
+		console.dir(function) info su function 
 		
 ** HTML CSS ROBA CHE NON SO 
 	HTML 
@@ -1026,4 +1052,133 @@ statement = istruzione
 			const stringa = number + '';
 			
 	** FUNCTIONS !
+		ARGOMENTI CON VALORI DI DEFAULT 
+				const createBooking = function (flightNumber, numPassengers = 1, price = 199) {
+			OLTRE A INIZIALIZZARE SI POSSONO ANCHE USARE ESPRESSIONI IN CUI SI POSSONO USARE GLI ALTRI ARGOMENTI (ESPRESSIONI USATE OVVIAMENTE QUANDO L'ARGOMENTO NON E' STATO PASSATO!)
+				const createBooking = function (flightNumber, numPassengers = 1, price = 199*1,2*numPassengers) {
+			PER EVITARE DI PASSARE UNO O PIU' PARAMETRI, SOSTITUIRLI CON undefined: VIENE APPLICATO IL DEFAULT, SE E' STATO IMPOSTATO 
 		
+		PASSARE PARAMETRI BY REFERENCE E BY VALUE: 
+			* PASSARE UN PRIMITIVE AD UNA FUNCTION E' COME PASSARNE UNA COPIA, QUINDI BY VALUE: MODIFICHE AL PRIMITIVO NELLA FUNCTION NON SI RIFLETTONO SUL PRIMITIVE DI PARTENZA
+			* PASSARE UN OGGETTO E' PASSARE IL REFERENCE: MODIFICARE L'OGGETTO NELLA FUNCTION VUOL DIRE MODIFICARE LO STESSO OGGETTO FUORI DALLA FUNCTION (L'HEAP MODIFICATO E' LO STESSO!)
+			NOTA BENE: IN REALTA' JAVASCRIPT PASSA SOLO BY VALUE, ANCHE QUANDO SEMBRA CHE PASSI IL REFERENCE ! CIOE': VIENE PASSATO L'ADDRESS CHE PERO' E' IL VALUE NELLO CALL STACK 
+				==> (PER GLI OGGETTI) NEL CALL STACK VIENE SALVATO L'IDENTIFIER, L'ADDRESS CHE PUNTA A UN INDIRIZZO DI MEMORIA CHE CONTIENE IL **VALUE**, CIOE' L'ADDRESS DELL'HEAP IN CUI C'E' L'INDIRIZZO DEL VALUE
+		(CONCETTO) FIRST-CLASS FUNCTION: TUTTE LE FUNCTION JAVASCRIPT SONO "FIRST-CLASS CITIZENS": SONO TRATTATE COME SEMPLICI VALUE, DI FATTO SONO UN TIPO DI DATO
+			FUNCTION SONO OGGETTI, HANNO I LORO METODI, COME bind 
+			POSSONO ESSERE ASSEGNATI A VARIABILI, PASSATI COME ARGOMENTI, RESTITUITI COME RISULTATO, ASSEGNATI COME METODO ALLA PROPERTY DI UN OGGETTO 
+		HIGH-ORDER FUNCTIONS: UNA FUNCTION CHE RICEVE FUNCTION COME PARAMETRO O CHE RESTITUSCE UNA FUNCTION O ENTRAMBI 
+				ESEMPIO: domobject.addEventListener(evento, function) 	addEventListener E' UN HIGH-ORDER FUNCTION PERCHE' IL SECONDO ARGOMENTO E' UNA FUNCTION, QUELLA CHE VOGLIO CHE VENGA ESEGUITA QUANDO SI VERIFICA L'EVENTO 
+			CALLBACK FUNCTION: FUNCTION PASSATA COME PARAMETRO AD UNA HIGH-ORDER FUNCTION. SI DICE "CALLBACK" PERCHE' NON VIENE INVOCATA SUBITO MA IN UN SECONDO MOMENTO 
+				LE CALLBACK SONO UTILI PER FARE ASTRAZIONE: LA FUNCTION HIGH-ORDER CHE RICEVE LA FUNCTION COME PARAMETRO NON HA IDEA DI COSA FACCIA, MA AD UN CERTO PUNTO LA ESEGUE. 
+			PROPERTIES DELLE FUNCTION: 
+				name 	NOME DELLA FUNCTION 
+					const transformer = function (str, fn) {
+						console.log(`Transformed by: ${fn.name}`);
+					}
+			ESEMPIO DI FUNCTION RESTITUITA DA FUNCTION 
+				const ciao = function (saluto) {
+					return function (nome) {
+						console.log(`${saluto} ${nome} !`);
+					}
+				}
+				const saluto = ciao("Hey ! ciao");
+				saluto("Giggi");
+				//oppure 
+				ciao("Hey ! ciao")("giggi");
+			CON ARROW FUNCTION
+				const ciao = saluto => nome => console.log(`${saluto} ${nome} !`);
+				ciao("Hola")("Pippo");
+			PROBLEMA THIS USATO NEI METODI E UNDEFINED QUANDO SI INVOCA UNA REGULAR FUNCTION: 
+				IN UN OGGETTO LE FUNCTION DICHIARATE SONO METODI E POSSONO ACCEDERE ALL'OGGETTO THIS CHE PUNTA ALL'OGGETTO E A TUTTE LE SUE PROPRIETA'. 
+				IL DISCRIMINANTE E' COME INVOCO LA FUNCTION/METODO: SE LA INVOCO COME METODO (oggetto.function) ALLORA THIS SARA' PRESENTE E PUNTERA' ALL'OGGETTO. 
+				MA SE COPIO LA FUNCTION/METODO IN UNA VARIABILE AL DI FUORI DELL'OGGETTO E POI INVOCO LA NUOVA FUNCTION, QUESTA DIVENTA REGULAR FUNCTION (NON PIU' METHOD QUINDI) E PERCIO' IL THIS E' UNDEFINES, PER CUI IL CODICE DELLA FUNCTION ANDRA' IN ERRORE. 
+				CI VENGONO IN AIUTO I SEGUENTI METODI DI FUNCTION:
+			METODI DELLE FUNCTION: 
+			
+				CALL: CON IL METODO CALL POSSO INVOCARE UNA FUNCTION CHE UTILIZZA AL SUO INTERNO IL THIS, INDICANDO NEL PRIMO ARGOMENTO A QUALE OGGETTO DEVE PUNTARE IL THIS. 
+					IN PRATICA CON CALL POSSO INVOCARE UN METHOD INDICANDO L'OGGETTO A CUI DEVE AFFERIRE.
+					const oggetto1 = {
+						prop1: "ciao",
+						method1(nome) {
+							console.log(`${this.prop1} ${nome}`)
+						}
+					}
+					oggetto1.method1("giggi");
+					
+					const oggetto2 = {
+						prop1: "forza"
+					}
+					const method2 = oggetto1.method1;	//copio method1 in una variabile, diventa una regular function! 
+					//method2("pippo");   // errore perché il this del metodo copiato è undefined quando la function è regular e non più method
+					method2.call(oggetto2, "milan");	// CON call INDICO NEL PRIMO ARGOMENTO L'OGGETTO A CUI PUNTERA' IL THIS DI METHOD2 (CHE E' UNA COPIA DI OGGETTO1.METHOD1)
+					oggetto1.method1.call(oggetto2, "ehila!");	// invoco direttamente method1 di oggetto1 però indicando che il this in esso deve puntare all'altro oggetto oggetto2 !
+					ANCHE COSI' !! 
+						const method = function (nome) {
+							console.log(`${this.prop1} ${nome}`);
+						}
+						const oggetto1 = {
+							prop1: "ciao"
+						}
+						const oggetto2 = {
+							prop1: "forza"
+						}
+						method.call(oggetto1, "oggetto1 !");
+						method.call(oggetto2, "oggetto2 !");
+
+						poll.displayResults.call({ answers: [5, 2, 3] });
+						poll.displayResults.call({ answers: [5, 2, 3] }, "string");
+						
+				APPLY: (NON PIU' USATO !) COME CALL MA GLI ARGOMENTI VANNO MESSI IN UN ARRAY 
+						method.apply(oggetto1, ["oggetto1 !"]);
+						method.apply(oggetto2, ["oggetto2 !"]);
+						MEGLIO, USANDO SPREAD:
+						method.call(oggetto1, ...["oggetto1 !"]);
+						method.call(oggetto2, ...["oggetto2 !"]);
+				BIND: HA SOLO L'OGGETTO PER IL THIS IN INPUT, INFATTI NON INVOCA IL METODO MA RESTITUISCE UNA FUNCTION IN CUI IL THIS E' L'OGGETTO PASSATO IN INPUT, CHE POI POSSO INVOCARE PASSANDO GLI ARGOMENTI 
+						const method1 = method.bind(oggetto1)
+						method1("oggetto1 !");
+						const method2 = method.bind(oggetto2)
+						method2("oggetto2 !");
+					CON BIND POSSO ANCHE PREVALORIZZARE I PARAMETRI DEL METODO (NELL'ESEMPIO HO UN SOLO PARAMETRO..) 
+						APPLICO IL PARADIGMA "PARTIAL APPLICATION": QUANDO UNA PARTE DEI PARAMETRI DI UNA FUNCTION SONO GIA' STATI IMPOSTATI
+						method.bind(oggetto1, "oggetto1 !")();
+						method.bind(oggetto2, "oggetto2 !")();
+					USO BIND ANCHE QUANDO USO UN METODO IN UN DOM EVENT LISTENER E IN QUEL CONTESTO IL THIS NON PUNTA PIU' ALL'OGGETTO MA ALL'ELEMENTO DOM CHE HA TRIGGERATO L'EVENTO. 
+						const lufthansa = {};
+
+						lufthansa.planes = 300;
+						lufthansa.buyPlane = function () {
+							console.log(this);
+							this.planes++;
+							console.log(this.planes);
+						}
+						document.querySelector(".buy").addEventListener("click", lufthansa.buyPlane.bind(lufthansa));	//con bind specifico l'oggetto del this, mi ritorna la function che verrà invocata quando si verifica l'evento click 
+					USO BIND ANCHE QUANDO HO UNA FUNCTION GENERICA E NE VOGLIO CREARE UNA PIU' SPECIFICA, CON UNO O PIU' PARAMETRI PREVALORIZZATI 
+						const calcTassa = (perc, importo) => importo + importo * (perc / 100);
+						console.log(calcTassa(19, 100));
+						const calcTassaIVA = calcTassa.bind(null, 22);   //preimposto perc=22, il this non mi serve e lo imposto a null
+						console.log(calcTassaIVA(100));					
+		
+		IMMEDIATELY INVOKED FUNCTION EXPRESSIONS (IIFE): E' UN PATTERN.
+			SONO FUNCTION CHE VENGONO ESEGUITE IMMEDIATAMENTE UNA SOLA VOLTA, E POI NON POSSONO PIU' ESSERE INVOCATE. 
+			IN PRATICA BISOGNA DICHIARARE LA FUNCTION SENZA UN NOME, USANDO IL TRICK DI SCRIVERLA DENTRO UN'EXPRESSION CIOE' DENTRO PARENTESI TONDE, ALTRIMENTI JAVASCRIPT SI INCAZZA:
+				(function () {
+					console.log("ciao");
+				})();	//per invocarla basta mettere le parentesi ()
+				(() => console.log("ciao"))();	// IN VERSIONE ARROW FUNCTION
+			QUESTO PATTERN E' STATO CREATO DA QUALCHE DEVELOPER PER IMPLEMENTARE L'INCAPSULAMENTEO DI VARIABILI IN JAVASCRIPT: VISTO CHE LE FUNCTION HANNO IL LORO SCOPE, UNA FUNCTION "FINTA" COME QUELLA IIFE CI PERMETTE DI DICHIARARE VARIABILI PRIVATE, NON VISIBILI AL DI FUORI DELLO SCOPE DELLA FUNCTION IIFE. 
+			MA DA ES6 E' STATO INTRODOTTO LO SCOPE BLOCK {...} CHE FA LA STESSA COSA, QUINDI DA ES6 LE FUNCTION IIFE NON SI USANO PIU'. 
+			COMUNQUE UNA IIFE SI PUO' ANCORA USARE IN MODERN JS PER ALCUNI USE CASE: 
+				- ESEGUIRE DEL CODICE SONO UNA VOLTA
+				- ALTRO.. 
+				
+		CLOSURES: REGOLA GENERALE: UNA FUNZIONE HA ACCESSO AL VARIABLE ENVIRONMENT (VE) DELL'EXECUTION CONTEXT IN CUI E' STATA CREATA, ANCHE SE QUESTO EC NON E' PIU' NELLO CALL STACK ! 
+			CLOSURE: VE ATTACCATO ALLA FUNCTION, ESATTAMENTE COM'ERA AL MOMENTO IN CUI LA FUNCTION E' STATA CREATA. DI FATTO LO SCOPE ORIGINARIO, AL MOMENTO DELLA CREAZIONE DELLA FUNCTION, E' STATO PRESERVATO NELLA CLOSURE ANCHE SE E' STATO DISTRUTTO PERCHE' LA FUNZIONE COLLEGATA (CHE HA CREATO LA "SOTTO" FUNZIONE) E' STATA ESEGUITA. 
+			QUANDO JAVASCRIPT UTILIZZA UNA VARIABILE, PER PRIMA COSA VA A VEDERE NEL CLOSURE, ANCORA PRIMA DELLO SCOPE DELLA FUNCTION. 
+			IL CLOSURE SOPRAVVIVE A TEMPO INDEFINITO DOPO L'ESECUZIONE DELLA FUNCTION. 
+			IL CLOSURE PERMETTE L'ACCESSO A TUTTE LE VARIABILI (ANCHE GLI ARGOMENTI!) DELLA FUNCTION PARENT IN CUI LA FUNCTION E' STATA CREATA, ANCHE DOPO CHE LA PARENT FUNCTION E' TERMINATA COL RETURN. LA FUNCTION MANTIENE UN REFERENCE AL SUO OUTER SCOPE, IL CHE PRESERVA LO SCOPE CHAIN NEL TEMPO. 
+			ATTENZIONE: LA CLOSURE VIENE CREATA PER TUTTE LE FUNCTION CREATE DENTRO UN'ALTRA FUNCTION, NON SOLO PER QUELLE RITORNATE INDIETRO !!
+				PER ESEMPIO VIENE CREATA ANCHE PER LE FUNCTION INVOCATE DAL setTimeout DOPO X MILLISECONDI, IN QUESTO MODO QUESTE FUNCTION POSSONO ACCEDERE AL VE DELLA PARENT FUNCTION ESEGUITA E TERMINATA ANCHE PARECCHI SECONDI PRIMA. 
+			*** UTILE console.dir(function) : MOSTRA INFO SU FUNCTION, NAME, LENGTH, E ANCHE SCOPE 
+				SE ESEGUO console.dir SU FUNCTION CREATA IN UN'ALTRA FUNCTION, TRA GLI SCOPE VEDO ANCHE CLOSURE 
+			CLOSURE DI UNA FUNCTION PUO' CAMBIARE NEL TEPMO, PER ESEMPIO QUANDO UNA FUNZIONE CREATA IN UNA FUNCTION PARENT VIENE RICREATA IN UN'ALTRA PARENT FUNCTION. IN QUESTO CASO LA CLOSURE AVRA' LE VARIABILI DELLA SECONDA PARENT FUNCTION E NON PIU' DELLA PRIMA. 
