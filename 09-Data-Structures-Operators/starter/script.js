@@ -575,6 +575,7 @@ for (const [key, value] of objToMap) {
 console.log(store);
 */
 
+/*
 const gameEvents = new Map([
   [17, '⚽️ GOAL'],
   [36, '🔁 Substitution'],
@@ -604,3 +605,21 @@ const time = [...gameEvents.keys()].pop();  // converto in array e con pop otten
 console.log(`An event happened, on average, every ${time / gameEvents.size} minutes`);
 
 for (const [key, value] of gameEvents) console.log(`${key <= 45 ? '[FIRST' : '[SECOND'} HALF] ${key}: ${value} `);
+*/
+
+// const prova = "ciao ciao";
+// console.log(prova[0]);
+// console.log(prova.length);
+// console.log("ciao"[3]);
+// console.log("ciao".length);
+// console.log("forza".indexOf('za'));
+// const forza = "forza milan";
+// console.log(forza.slice(forza.indexOf("milan")));
+
+// let myName = "gIggI  \n\r";
+// myName = myName[0].toUpperCase() + myName.slice(1).toLowerCase().trim();
+// console.log(myName);
+
+const boh = "forza milan milan milan";
+console.log(boh.replace(/milan/g, "giggi"));
+//console.log(boh.replaceAll("milan", "giggi"));

@@ -989,4 +989,30 @@ statement = istruzione
 			mappa.values()
 		ITERARE SULLE ENTRIES 
 			mappa.entries()
-				
+	
+	** STRINGS 
+		LE STRINGHE SONO COME ARRAY, POSSO OTTENERE L'IESIMO CARATTERE CON [posizione] E LA LUNGHEZZA CON .lenght 
+			const prova = "ciao ciao";
+			console.log(prova[0]);
+			console.log(prova.length);
+			console.log("ciao"[3]);
+			console.log("ciao".length);		
+		STRING METHODS: 
+			indexOf('r') 		PRIMA POSIZIONE STRINGA IN STRINGA, CASE SENSITIVE
+			lastIndexOf('r') 	ULTIMA POSIZIONE STRING IN STRINGA, CASE SENSITIVE 
+			slice(posizione_start, posizione_end(nonincluso!!))	SUBSTRING DA POSIZIONE IN INPUT, USARE INDEXOF !, INDICI PARTENDO DA ZERO 
+			slice(posizione_negativa)		SUBSTRING DAL FONDO MENO I CARATTERI INDICATI, ESEMPIO -2 PARTE DAL PENULTIMO CARATTERE 			
+			slice(posizione_start, posizione_end_negativa)	SUBSTRING DA POSIZIONE IN INPUT A POSIZIONE END PARTENDO DAL FONDO MENO CARATTERI INDICATI 
+			toLowerCase()		CONVERTE IN MINUSCOLO 
+			toUpperCase()		CONVERTE IN MAIUSCOLO
+			trim()				TOGLIE SPAZI E RITORNI A CAPO (\n) ALL'INIZIO E ALLA FINE DELLA STRINGA 
+			(ES2019) trimStart() trimEnd()
+			replace(stringa-da-rimpiazzare, stringa-sostitutiva) 
+			replace(/espressione-regex/g, stringa-sostitutiva) 	// USARE REGEX PER SOSTITUIRE TUTTE LE RICORRENZE, TIPO REPLACEALL, /g = global 
+				const boh = "forza milan milan milan";
+				console.log(boh.replace(/milan/g, "giggi"));			
+			replaceAll 	COME REPLACE MA SU TUTTE LE RICORRENZE (FUNZIONA!!!) 
+			includes(stringa) 	RITORNA TRUE SE LA STRINGA CONTIENE stringa 
+			startsWith(stringa) RITORNA TRUE SE LA STRINGA INIZIA CON stringa
+			startsEnd(stringa) RITORNA TRUE SE LA STRINGA FINISCE CON stringa
+			*** NOTA BENE: QUANDO SI LAVORA CON LE STRINGHE IN INPUT, PER ESEMPIO IN UNA FUNCTION, PRIMA DI TUTTO CONVERTIRE IN LOWERCASE !!!
