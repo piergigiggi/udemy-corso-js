@@ -1,8 +1,8 @@
 'use strict';
 
 // Data needed for a later exercise
-const flights =
-  '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
+// const flights =
+//   '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
 
 // Data needed for first part of the section
 const restaurant = {
@@ -620,6 +620,51 @@ for (const [key, value] of gameEvents) console.log(`${key <= 45 ? '[FIRST' : '[S
 // myName = myName[0].toUpperCase() + myName.slice(1).toLowerCase().trim();
 // console.log(myName);
 
-const boh = "forza milan milan milan";
-console.log(boh.replace(/milan/g, "giggi"));
+// const boh = "forza milan milan milan";
+// console.log(boh.replace(/milan/g, "giggi"));
 //console.log(boh.replaceAll("milan", "giggi"));
+/*
+const fullname = "Mario Rossi";
+const [nome, cognome] = fullname.split(' ');
+console.log(`nome: ${nome} - cognome: ${cognome}`);
+
+const newName = ["Mr.", nome, cognome.toUpperCase()].join(' ');
+console.log(newName);
+
+const capitalize = function (name) {
+  const names = name.split(' ');
+  const newNames = [];
+  for (const n of names) {
+    //newNames.push(n[0].toUpperCase() + n.slice(1).toLowerCase());
+    newNames.push(n.replace(n[0], n[0].toUpperCase()));
+  }
+  console.log(newNames.join(' '));
+}
+
+capitalize("mario rossi junior bepi");
+
+const maskNumber = function (number, digit) {
+  const str = number + '';
+  const mask = str.slice(-digit).padStart(str.length, '#');
+  return mask;
+}
+
+console.log(maskNumber(1234567890123456, 4));
+*/
+
+// console.log('Forza Milan !! '.repeat(10));
+
+const flights = '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
+
+// 🔴 Delayed Departure from FAO to TXL (11h25)
+//              Arrival from BRU to FAO (11h45)
+//   🔴 Delayed Arrival from HEL to FAO (12h05)
+//            Departure from FAO to LIS (12h30)
+
+const getCode = code => code.slice(0, 3).toUpperCase();
+
+for (const flight of flights.split('+')) {
+  const [departure, fao, txl, time] = flight.split(';')
+  const message = `${departure.includes('Delayed') ? '🛑' : ''} ${departure.replaceAll('_', ' ')} from ${getCode(fao)} to ${getCode(txl)} (${time.replace(':', 'h')})`.padStart(50, ' ');
+  console.log(message);
+}

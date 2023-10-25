@@ -992,11 +992,12 @@ statement = istruzione
 	
 	** STRINGS 
 		LE STRINGHE SONO COME ARRAY, POSSO OTTENERE L'IESIMO CARATTERE CON [posizione] E LA LUNGHEZZA CON .lenght 
+		*** NOTA BENE: QUANDO SI LAVORA CON LE STRINGHE IN INPUT, PER ESEMPIO IN UNA FUNCTION, PRIMA DI TUTTO CONVERTIRE IN LOWERCASE !!!
 			const prova = "ciao ciao";
 			console.log(prova[0]);
 			console.log(prova.length);
 			console.log("ciao"[3]);
-			console.log("ciao".length);		
+			console.log("ciao".length);				
 		STRING METHODS: 
 			indexOf('r') 		PRIMA POSIZIONE STRINGA IN STRINGA, CASE SENSITIVE
 			lastIndexOf('r') 	ULTIMA POSIZIONE STRING IN STRINGA, CASE SENSITIVE 
@@ -1008,11 +1009,21 @@ statement = istruzione
 			trim()				TOGLIE SPAZI E RITORNI A CAPO (\n) ALL'INIZIO E ALLA FINE DELLA STRINGA 
 			(ES2019) trimStart() trimEnd()
 			replace(stringa-da-rimpiazzare, stringa-sostitutiva) 
+				USE CASE: CAPITALIZE STRINGA (PRIMO CARATTERE MAIUSCOLO, RESTO MINUSCOLO): stringa.replace(stringa[0], stringa[0].toUpperCase()))
 			replace(/espressione-regex/g, stringa-sostitutiva) 	// USARE REGEX PER SOSTITUIRE TUTTE LE RICORRENZE, TIPO REPLACEALL, /g = global 
 				const boh = "forza milan milan milan";
 				console.log(boh.replace(/milan/g, "giggi"));			
-			replaceAll 	COME REPLACE MA SU TUTTE LE RICORRENZE (FUNZIONA!!!) 
+			(ES2021) replaceAll 	COME REPLACE MA SU TUTTE LE RICORRENZE (FUNZIONA!!!) 
 			includes(stringa) 	RITORNA TRUE SE LA STRINGA CONTIENE stringa 
 			startsWith(stringa) RITORNA TRUE SE LA STRINGA INIZIA CON stringa
 			startsEnd(stringa) RITORNA TRUE SE LA STRINGA FINISCE CON stringa
-			*** NOTA BENE: QUANDO SI LAVORA CON LE STRINGHE IN INPUT, PER ESEMPIO IN UNA FUNCTION, PRIMA DI TUTTO CONVERTIRE IN LOWERCASE !!!
+			split(carattere/stringa)	SUDDIVIDE STRINGA IN INPUT IN UN ARRAY IN BASE AL CARATTERE INDICATO COME DELIMITATORE 
+			array.join(carattere/stringa) UNISCE TUTTI GLI ELEMENTI DELL'ARRAY SPAZIANDOLI COL CARATTERE INDICATO. 
+			padStart(lunghezza, carattere) AGGIUNGE CARATTERE IN TESTA ALLA STRINGA FINO AL RAGGIUNGIMENTO DELLA LUNGHEZZA INDICATA 
+			padEnd(lunghezza, carattere) AGGIUNGE CARATTERE ALLA FINE DELLA STRINGA FINO AL RAGGIUNGIMENTO DELLA LUNGHEZZA INDICATA 
+			repeat(numerovolte)		RIPETE LA STRINGA IN INPUT PER IL NUMERO DI VOLTE INDICATO 
+		CONVERTIRE NUMERO IN STRINGA
+			const stringa = number + '';
+			
+	** FUNCTIONS !
+		
