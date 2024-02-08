@@ -91,9 +91,8 @@ const displayMovements = function (movements, sort = false) {
 
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${
-      i + 1
-    } ${type}</div>
+        <div class="movements__type movements__type--${type}">${i + 1
+      } ${type}</div>
         <div class="movements__value">${mov}€</div>
       </div>
     `;
@@ -155,6 +154,23 @@ const updateUI = function (acc) {
 // Event handlers
 let currentAccount;
 
+// FAKE LOGIN
+currentAccount = accounts[0];
+labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]
+  }`;
+containerApp.style.opacity = 100;
+updateUI(currentAccount);
+
+const now = new Date();
+const day = `${now.getDate()}`.padStart(2, 0);
+const month = `${now.getMonth() + 1}`.padStart(2, 0);
+const year = now.getFullYear();
+const hour = now.getHours();
+const min = now.getMinutes();
+
+// dat/month/year
+labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
   e.preventDefault();
@@ -166,9 +182,8 @@ btnLogin.addEventListener('click', function (e) {
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     // Display UI and message
-    labelWelcome.textContent = `Welcome back, ${
-      currentAccount.owner.split(' ')[0]
-    }`;
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]
+      }`;
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -251,3 +266,71 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// radice quadrata
+console.log(Math.sqrt(25));
+console.log(25 ** (1 / 2));
+
+// radice al cubo
+console.log(25 ** (1 / 3));
+
+// MAX
+console.log(Math.max(1, 2, 5, 7, 8, 9));
+
+// PI 
+console.log(Math.PI * Number.parseFloat("10px") ** 2);
+
+console.log(Math.trunc(Math.random() * 6) + 1);
+
+// funzione per generare numero random tra i due in input
+const randomInt = (min, max) => Math.trunc(Math.random() * (max - min) + 1) + min;
+console.log(randomInt(5, 10));
+
+// funzione che determina se numero in input è pari o dispari (even/odd)
+const isEven = n => n % 2 === 0;
+console.log(isEven(3));
+
+
+// const movs = Array.from(document.querySelectorAll(".movements__row")).forEach((elem, i) => i % 2 === 0 ? elem.style.backgroundColor = "orangered" : undefined);
+// console.log(movs);
+// [...document.querySelectorAll(".movements__row")].forEach((elem, i) => elem.style.backgroundColor = `${i % 2 === 0 ? "green" : "yellow"}`);
+
+// scrivere nel codice numeri in modo più comprensibile con numeric separator _
+// non formatta niente !
+/*
+const diameterSolarSystem = 287_460_000_000;
+console.log(diameterSolarSystem);
+
+console.log(Number.MAX_SAFE_INTEGER);
+
+console.log(111111111111111111111111111111111111111111n);
+console.log(BigInt(1111111111111111111111111111111111111111));
+
+// CREARE DATE IN JS: 4 MODI !
+const now = new Date();
+console.log(now);
+
+const date = new Date(1705055511000);
+console.log(date);
+
+const future = new Date(2030, 1, 12, 11, 38);
+console.log(future.getTime());
+*/
+
+// const whereAmI = async function (country) {
+//   const res = await fetch(`https://countries-api-836d.onrender.com/countries/${country}`);
+//   console.log(res);
+// }
+
+// whereAmI('portugal');
+// console.log("ciao");
+
+const parole = ['da', 'giggi'];
+const myTimer = setTimeout((arg1, arg2) => console.log(`ciao ${arg1} ${arg2}`), 3000, ...parole);
+
+if (parole.includes('giggi')) {
+  console.log("trovato giggi, spengo myTimer");
+  clearTimeout(myTimer);
+}
+
+setInterval(() => console.log(new Date()), 1000);

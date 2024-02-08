@@ -8,6 +8,7 @@ console chrome: posso usarla come calcolatrice !!
 vscode
 ctrl+ù toggle comments 
 IN HTML: ! + TAB  SCRIVE TEMPLATE HTML DI BASE 
+sostituire stringhe multiple: selezionare stringa, ctrl+d tante volte quante le stringhe, scrivere..
 
 windows
 win+è emoticons
@@ -17,17 +18,121 @@ ROBA UTILE DA INSTALLARE IN VSCODE
 	
 PAROLE UTILI PER SPIEGARE
 	ELEMENTS HTML, NO TAG, I TAG SONO I DELIMITATORI, UN ELEMENTO INPUT, UN ELEMENTO SELECT ECC..
+	STICKY NAVIGATION = LA BARRA DI NAVIGAZIONE CHE COMPARE DOPO UN PO' DI SCROLL DELLA PAGINA 
+		IN PRATICA AGGIUNGO UN CLASS STICKY ALL'ELEMENTO HEADER NEL BODY CHE IMPOSTA POSITION: FIXED E BACKGROUND-COLOR TRASPARENTE (255,255,255)
+			.nav.sticky {
+			  position: fixed;
+			  background-color: rgba(255, 255, 255, 0.95);
+			}		
+		PER IMPLEMENTARE NON USARE window.addEventListener('scroll' ...) PERCHE' POCO EFFICENTE 
+		
+	TABBED COMPONENT = COMPONENTE CON BOTTONI DISPOSTI A TAB, UNO DOPO L'ALTRO 
+	
+	
+*** APPROFONDIMENTO HTML 
+	* quando viene eseguita function associata ad onclick su bottone che sta dentro una form, il comportamento di default è il submit della form e il reload della pagina.
+		per evitare: nella callback associata all'evento, oggetto in input event, invocare metodo e.preventDefault();		
+	* quando si clicca su un anchor con #, perché lancia function, il default behaviour è lo scroll up to the top page. per evitare aggiungere e.preventDefault() come prima istruzione della function dell'evento. 
+	* getElementsByClassName e getElementsByTagName restituiscono HTMLCollection che si aggiorna in automatico al variare del DOM ! querySelectorAll che restituisce NodeList non lo fa !
+	* quando si crea un nuovo elemento html lo si può mettere in un solo punto del DOM, per esempio con append, ma non piu' di uno ! se lo faccio, per esempio prima prepend poi append, l'elemento viene spostato ! per copiarlo copiare l'elemento con append(elemento.cloneNode(true)) (se true copia anche i child dell'elemento) 
+
+*** ESEMPI JS FIGHI 
+// seleziono tutti elementi con class movements__row e cambio il colore di background in funzione pari/dispari
+[...document.querySelectorAll(".movements__row")].forEach((elem, i) => elem.style.backgroundColor = `${i % 2 === 0 ? "green" : "yellow"}`);
+
+// faccio traversing del DOM selezionando tutti i sibling di un h1 (salendo sul padre e poi ottenendo i children) e su questi, converto in array con spread e con foreach applico a tutti, meno che all'h1 un transform 
+[...h1.parentElement.children].forEach(function(el){
+	el !== h1 && el.style.transform = "scale(0.5)";
+});
+
+// event listener con function esterna a cui passo l'oggetto this con i parametri che mi servono, usando bind 
+const handleClick = function (e) {		// devo per forza dichiarare solo il parametro e
+  console.log(e.target.src, this.param);
+}
+document.querySelector('.nav__logo').addEventListener('click', handleClick.bind({ param: "giggi" }));
+
 	
 BEST PRACTICES 
 	HTML
-		NON USARE ID PER SELEZIONARE O APPLICARE STYLE A ELEMENTI, USARE INVECE CLASS !!
-		ID E CLASS SI SCRIVONO CON -, NON IN CAMELCASE, ESEMPI: course-image, your-name 
+		. NON USARE ID PER SELEZIONARE O APPLICARE STYLE A ELEMENTI, USARE INVECE CLASS !!
+		. ID E CLASS SI SCRIVONO CON -, NON IN CAMELCASE, ESEMPI: course-image, your-name 
+		. innerHTML (per i div) E' una property !!
+		. textContent (per i P) e' una property !! ma anche per i div !
+		. e.preventDefault() usare in callback click di bottone dentro form per evitare il submit della form e il reload della pagina
+		. value (per gli input) è una property !
+		. blur() su elemento: perde focus. 		
+		. getElementsByClassName e getElementsByTagName restituiscono HTMLCollection che si aggiorna in automatico al variare del DOM ! querySelectorAll che restituisce NodeList non lo fa !
+			posso convertire HTMLCollection in array usando spread [...oggetto] oppure Array.from(oggetto) 
+		. elemento.getAttribute('attributo-custom') legge gli attributi non standard che ho impostato nel DOM, infatti elemento.attributo-custom non funziona !
+			immagine.getAttribute('src') restituisce l'url relativo, mentre immagine.src l'url assoluto !
+			IDEM CON href !!
+		. elemento.setAttribute('attributo-custom','valore') imposto attributo custom con valore specificato
+		. elemento.className restituisce l'attributo class dell'elemento quindi i suoi class 
+			NOTA BENE: NON USARE className PER IMPOSTARE CLASSE PERCHE' SOVRASCRIVE TUTTO ! USARE classList.add VEDI SOTTO E OLTRE 
+		. elemento.classList restituisce un oggetto con cui posso aggiungere, rimuovere classi, toggle, contains , vedi sotto 
+		. elemento.dataset.attributoData per interagire con data attributes, cioè quelli che iniziano con data-. in js usare notazione camelCase senza data-
+		
+	CSS 
+		. elemento.style RESTITUSCE SOLO GLI STYLE INLINE, CIOE' QUELLI CHE HO IMPOSTATO MANUALMENTE CON elemento.style.property=valore 
+		. getComputedStyle(elemento) RESTITUISCE TUTTE LE PROPERTY STYLE DELL'ELEMENTO CON I RELATIVI VALORI ! 
+			getComputedStyle(elemento).property RESTITUISCE IL VALORE DELLA PROPERTY 
+			ATTENZIONE: getComputedStyle(elemento).height torna per esempio '50px' quindi una stringa. se voglio partire da questo per aumentare height devo prima convertire la stringa in un numero usando parseFloat e poi aggiungere il numero e poi la stringa 'px': 
+				message.style.height = parseFloat(getComputedStyle(message).height) + 40 + 'px';
+		. CSS Custom Properties: sono vere e proprie variabili inizializzate con un valore e riusabili nel CSS. si dichiarano con --nomevariabile: valore;  e si usano con var(variabile) 
+			:root {		// root = document element 
+			  --color-primary: #5ec576;
+			}		
+			.section__description {
+				color: var(--color-primary);
+			}
+			Sono modificabili da JS : document.documentElement.style.setProperty(nomevariabile, valore);
+				document.documentElement.style.setProperty('--color-primary', 'orangered');
+		. style.opacity per schiarire
+		. selettore elementi per tag e attributo: img[data-src] 
+			document.querySelectorAll(img[data-src])
+		. elemento.style.transform(...) applica trasformazione all'elemento, per esempio
+			style.transform = "scale(0.5)"  //rimpicciolisce 
+			style.transform = "translateX(-200)" // sposta sull'asse orizzontale, 200 pixel a sinistra
+			
+				
 	JS 
+		. usare EVENT DELEGATION per impostare event listener a livello di padre, per esempio un div che contiene dei bottoni e poi nella function fare MATCHING STRATEGY per determinare se sto elaborando l'elemento corretto 
+			const tabsContainer = document.querySelector('.operations__tab-container');
+			tabsContainer.addEventListener('click', function (e) {
+			  const clicked = e.target.closest('.operations__tab');		// uso closest per risalire al bottone più vicino all'elemento che ha provocato il click, può essere il bottone stesso !
+			  console.log(clicked.className, clicked.dataset.tab);
+			});		
+			NOTA BENE: QUANDO SI FA MATCHING STRATEGY E' MOLTO MEGLIO USARE CLOSEST CHE RISALIRE MANUALMENTE PERCHE' E' PIU' ROBUSTO, FUNZIONA ANCHE SE L'HTML VIENE MODIFICATO NEL TEMPO. PER ESEMPIO SE DOVREI RISALIRE DI DUE LIVELLI E POI NE VIENE AGGIUNTO UN TERZO, USANDO CLOSEST ME NE FREGO. 
+		. usare le "guard clause" nelle function degli eventi o più in generale: se ho bisogno di un oggetto ma è falsy eseguo return per uscire dalla function !
+			invece che mettere il blocco di codice dentro una if in cui testo l'esistenza dell'oggetto
+		. usare elemento.querySelector(All)(selettore) per cercare figli, indipendentemente dalla loro profondità nel DOM 
+		  usare elemento.closest(selettore) 	       per cercare padri, indipendentemente da quanto stiano più in alto nel DOM. può tornare anche se stesso. 
+		. elemento.addEventListener(evento, callback(e){
+			e.target //ottengo riferimento all'elemento target event equindi a tutte le sue proprietà
+					 // per accedere invece a elemento usare this oppure e.currentTarget
+						NOTA BENE: se ho usato bind per impostare l'oggetto this con parametri da passare alla funzione allora this !== e.currentTarget ! però currentTarget rimane inalterato !
+			}
+		. CONVERTIRE NUMERO IN STRINGA, USARE `${....}`
+			`${new Date().getMonth()+1}`
+		. CONVERTIRE STRINGA IN NUMERO: 
+			Number(stringa)
+			+stringa 
+			Number.parseFloat(stringa) // tutto quello che non è numero viene ignorato. se non c'è un numero ritorna NaN
+			Number.parseInt(stringa) // tutto quello che non è numero viene ignorato. se non c'è un numero ritorna NaN
+		. Date.now() TIMESTAMP DI ADESSO 
 		. NON USARE VAR, USARE CONST/LET 
+		. RANDOM: Math.trunc(Math.random() * 6) + 1  //GENERA NUMERO CASUALE DA 1 A 6 
+		. RANDOM: const randomInt = (min, max) => Math.floor(Math.random() * (max - min) + 1) + min;   //FUNZIONE GENERICA PER GENERARE RANDOM TRA DUE NUMERI 
+		. PROPERTY/ARGOMENTI NON USATI DICHIARARLI CON _ 
+			const arry = Array.from({ length: 7 }, (_, i) => i + 1);		// il primo parametro della callback (elemento corrente) non lo uso per cui lo chiamo _
+		. PER TROVARE IN ARRAY SE ESISTE UN OGGETTO USARE INCLUDES(VALORE) (RESTITUISCE TRUE/FALSE) 
+			PER VERIFICARE UNA CONDIZIONE DIVERSA DA UGUALE USARE SOME(CALLBACK(CONDITION)) 
 		. NON USARE ARROW FUNCTION COME METODI DI UN OGGETTO, IL THIS IN ESSE NON PUNTA ALL'OGGETTO MA AL PRIMO SCOPE PARENT UTILE 
 		. USARE ARROW FUNCTION DENTRO UNA FUNCTION IN UN METODO PER POTER USARE IL THIS CHE PUNTA ALL'OGGETTO, ALTRIMENTI DEVO USARE IL TRUCCO DEL SELF/THAT PRIMA DELLA FUNCTION DENTRO IL METODO 
 		. USARE STRICT MODE !
 		. USARE === !== 
+		. NON CONCATENARE METODI DI ARRAY CHE MUTANO L'ARRAY DI PARTENZA, COME SPLICE, REVERSE, ECC. !!!
+		. NON ESAGERARE CON CHAIN DI METODI DI ARRAY CON ARRAY DI GRANDI DIMENSIONI: PROBLEMI DI PERFORMANCE !! RIDURRE UTILIZZO DI MAP
 		. ATTENZIONE A Object.assign PER FARE COPIA DI OGGETTI: ESEGUE SHALLOW COPY CIOE' COPIA DI PRIMO LIVELLO, PER FARE DEEP CLONE USARE... DA COMPLETARE 
 		. USARE CONST CON GLI OGGETTI PER EVITARE (GRAZIE AD ERRORE) CHE VENGANO SOSTITUITI DA ALTRI OGGETTI, ANCHE DA OGGETTO VUOTO
 		. GLI ARRAY SONO OGGETTI: ATTENZIONE ! POSSO DEFINIRLI CON CONST E VARIARNE IL CONTENUTO MA NON SOSTITUIRLO CON UN ALTRO ARRAY, PER FARE CIO' DEVO DEFINIRLI CON LET 
@@ -79,7 +184,7 @@ BEST PRACTICES
 			. Object.entries(oggetto) RESTITUSCE KEY E VALUE IN UN ARRAY DI ARRAY 
 			. for (const key in oggetto) {
 				console.log(oggetto[key]);
-			  }
+			  }			 
 		. PER RIMUOVERE DUPLICATI DA ARRAY USARE new Set(array) E RICONVERTIRE IN ARRAY 
 			const arrayConDuplicati = ['aa', 'bb', 'aa', 'bb', 'cc'];
 			const arrayUnique = [...new Set(arrayConDuplicati)];    //creo Set dell'array con duplicati e con l'operatore Spread lo espando in un array
@@ -107,7 +212,69 @@ BEST PRACTICES
 				prop1: "forza"
 			}
 			method.call(oggetto1, "oggetto1 !");
-			method.call(oggetto2, "oggetto2 !");		
+			method.call(oggetto2, "oggetto2 !");
+		. PER ELIMINARE ULTIMO ELEMENTO DI UN ARRAY: 
+			* arr.pop();		
+			* arr.splice(-1)  //non slice !! quello lo restituisce e basta 
+		. PER OTTENERE ULTIMO ELEMENTO DI UN ARRAY 
+			* arr.slice(-1)	//
+			* arr.at(-1) 
+		. PER COPIARE ARRAY (SOLO PRIMO LIVELLO: SHALLOW COPY): 
+			* const arr2 = arr1.slice(); //slice senza parametri copia tutto l'array 
+			* const arr2 = [...arr1]; // SPREAD OPERATOR
+			* FORSE ANCHE Object.assign
+			* const copia = movements.map(e => e); // uso map senza eseguire alcun cambiamento a ciascun elemento 
+		. PER CONCATENARE ARRAY: 
+			* const arr3 = arr1.concat(arr2);
+			* const arr3 = [...arr1, ...arr2]; //SPREAD OPERATOR
+		. PER TROVARE UN ELEMENTO IN UN ARRAY 
+			* const found = arr.includes(valore); //TORNA TRUE/FALSE 
+		. PER TROVARE SE CI SONO UNO O PIU' ELEMENTI CHE SODDISFANO CONDIZIONE 
+			* const found = arr.some(el => el condizione); 
+		. PER GLI ARRAY: USARE map, filter, reduce !!!
+			const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+			// converto euro in dollari usando il metodo map 
+			const eurToDollars = movements.map(euro => Math.round(euro * 1.1));				
+			// seleziono i soli importi maggiori di zero 
+			const deposits = movements.filter(mov => mov > 0);			
+			// somma tutti i valori di movements. in reduce accumula la sommatoria in acc, inizializzandolo a zero
+			const balance = movements.reduce((acc, mov, i, arr) => acc + mov, 0);		
+			
+			// combinare i comandi concatenandoli
+			// filtro movimenti prendendo solo i deposito, converto ciascuno in dollari, sommo tutto 
+			const balanceUSD = movements.filter(mov => mov > 0).map(mov => Math.round(mov * 1.1)).reduce((acc, mov) => acc + mov, 0);
+			
+			// per fare debug dei singoli comandi usare l'array in input a ciascun comando: 
+			const balanceUSD = movements
+				.filter(mov => mov > 0)
+				.map((mov, i, arr) => {		// aggiungo arr per poter fare console.log, ricordarsi di aggiungere le graffe e return quando c'è più di un'istruzione !!
+				  i == 0 && console.log(arr);  // con i == 0 && eseguo console.log solo nel primo item invece che per tutti !
+				  return Math.round(mov * 1.1);
+				})
+				.reduce((acc, mov) => acc + mov, 0);			
+		. PER SORTARE ARRAY CON SOLE STRINGHE 
+			arr.sort()
+		. PER SORTARE ARRAY CON SOLI NUMBER: 
+			// Ascending
+			movements.sort((a, b) => a - b)
+			// Descending
+			movements.sort((a, b) => b - a)
+		. PER DICHIARARE ARRAY DI N ELEMENTI E INIZIALIZZARLO RIEMPENDOLO CON UN VALORE (E' MUTABLE!): 
+			const arr3 = new Array(5)
+			arr3.fill("ciao");			
+		. PER RIDURRE UN ARRAY AD UN OGGETTO, PER ESEMPIO FACENDO SOMMATORIE USARE reduce()
+			const sums = accounts.flatMap(acc => acc.movements).reduce((sums, mov) => {
+			  sums[mov > 0 ? "sumDepositi" : "sumPrelievi"] += mov;
+			  return sums;
+			}, { sumDepositi: 0, sumPrelievi: 0 });		
+		. PER ESEGUIRE SCROLL SU UN OGGETTO IN PAGINA 
+			  elementotarget.scrollIntoView({
+				behavior: "smooth"		//altri valori per animazione: auto, instant
+			  })		
+		. USARE ATTRIBUTO HREF DI UN ANCHOR, QUELLO CON #..., COME SELETTORE PER FARE QUERYSELECTOR SUL TARGET DELL'ANCHOR, PER ESEMPIO PER ESEGUIRE UNO SCROLL "SMOOTH" AL POSTO DI QUESTO ISTANTANEO DI DEFAULT  
+		
+		
+		
 			
 		
 
@@ -170,7 +337,9 @@ assign operator
 	= 
 	+= 	variabile = variabile + ...
 	*= /=
-	++  aggiunge 1 
+	++  aggiunge 1 ATTENZIONE: SE ++ SI TROVA A DESTRA INCREMENTA MA RESTITUISCE IL VECCHIO VALORE !! 
+							   PER AVERE INCREMENTO REALE METTERE ++ A SINISTRA !
+		
 	-- toglie 1 
 comparison operator 
 	< > <= >=  attenzione all'ultima, non scrivere => perché è lambda !
@@ -317,6 +486,7 @@ statement = istruzione
 			indexOf		restituisce posizione dell'elemento in input, se l'elemento non esiste restituisce -1
 			includes(ES6) restituisce true se l'elemento in input esiste nell'array, false se non esiste (testa con strict equality, vuol dire che se l'array ha un number e passo in input la stringa del number, includes non lo trova) 
 			concat      concatena l'array con quello/i passato in input 
+			sort ! VEDI SOTTO 
 		
 	Objects
 		const oggetto = {
@@ -443,7 +613,7 @@ statement = istruzione
 	document.querySelector('selettore') // esempio .classe #div ecc..
 		NOTA se selettore seleziona più elementi, restituisce solo il primo. per avere l'array di tutti gli elementi usare querySelectorAll
 		non seleziona come jquery, seleziona proprio l'html dell'elemento selezionato 
-		.textContent 	restituisce testo dell'elemento selezionato, per esempio per gli elementi p
+		.textContent 	restituisce testo dell'elemento selezionato, per esempio per gli elementi p o anchor 
 		.value			restituisce valore di un elemento, per esempio input text 
 	
 	document.querySelectorAll('selettore') // esempio .classe #div ecc..  seleziona TUTTI gli elementi selezionati dal selettore in input 
@@ -1036,6 +1206,7 @@ statement = istruzione
 			(ES2019) trimStart() trimEnd()
 			replace(stringa-da-rimpiazzare, stringa-sostitutiva) 
 				USE CASE: CAPITALIZE STRINGA (PRIMO CARATTERE MAIUSCOLO, RESTO MINUSCOLO): stringa.replace(stringa[0], stringa[0].toUpperCase()))
+				MEGLIO: stringa[0].toUpperCase() + stringa.slice(1)  //dopo aver convertito stringa in minuscolo !
 			replace(/espressione-regex/g, stringa-sostitutiva) 	// USARE REGEX PER SOSTITUIRE TUTTE LE RICORRENZE, TIPO REPLACEALL, /g = global 
 				const boh = "forza milan milan milan";
 				console.log(boh.replace(/milan/g, "giggi"));			
@@ -1134,7 +1305,7 @@ statement = istruzione
 						MEGLIO, USANDO SPREAD:
 						method.call(oggetto1, ...["oggetto1 !"]);
 						method.call(oggetto2, ...["oggetto2 !"]);
-				BIND: HA SOLO L'OGGETTO PER IL THIS IN INPUT, INFATTI NON INVOCA IL METODO MA RESTITUISCE UNA FUNCTION IN CUI IL THIS E' L'OGGETTO PASSATO IN INPUT, CHE POI POSSO INVOCARE PASSANDO GLI ARGOMENTI 
+				BIND: IL PRIMO PARAMETRO E' L'OGGETTO (STRINGA, NUMERO, OGGETTO, ECC..) PER IL THIS, INFATTI NON INVOCA IL METODO MA RESTITUISCE UNA FUNCTION IN CUI IL THIS E' L'OGGETTO PASSATO IN INPUT, CHE POI POSSO INVOCARE PASSANDO GLI ARGOMENTI. POSSO PASSARE AL BIND ANCHE UNO O PIU' PARAMETRI DELLA FUNCTION DA INVOCARE !, POSSO ANCHE PASSARE IL THIS NULL E PASSARE GLI ALTRI PARAMETRI (SE NON MI SERVE NULL). 
 						const method1 = method.bind(oggetto1)
 						method1("oggetto1 !");
 						const method2 = method.bind(oggetto2)
@@ -1182,3 +1353,874 @@ statement = istruzione
 			*** UTILE console.dir(function) : MOSTRA INFO SU FUNCTION, NAME, LENGTH, E ANCHE SCOPE 
 				SE ESEGUO console.dir SU FUNCTION CREATA IN UN'ALTRA FUNCTION, TRA GLI SCOPE VEDO ANCHE CLOSURE 
 			CLOSURE DI UNA FUNCTION PUO' CAMBIARE NEL TEPMO, PER ESEMPIO QUANDO UNA FUNZIONE CREATA IN UNA FUNCTION PARENT VIENE RICREATA IN UN'ALTRA PARENT FUNCTION. IN QUESTO CASO LA CLOSURE AVRA' LE VARIABILI DELLA SECONDA PARENT FUNCTION E NON PIU' DELLA PRIMA. 
+			
+	*** ARRAY METHODS
+		
+		slice(indice_start, indice_end(nonincluso!!))	ESTRAE ELEMENTI ARRAY DA INDICE IN INPUT, RITORNA UN NUOVO ARRAY, NON MODIFICA ARRAY DI PARTENZA. ANCHE FINO A INDICE END, NON INCLUSO NELL'ESTRAZIONE. 
+		slice(indice_negativa)		ESTRAE ELEMENTI ARRAY DAL FONDO MENO GLI ELEMENTI INDICATI, ESEMPIO -2 PARTE DAL PENULTIMO ELEMENTO
+			console.log("ultimo elemento array: ", arr.slice(-1));
+		slice(indice_start, indice_end_negativa)	ESTRAE DA indice IN INPUT A indice END PARTENDO DAL FONDO MENO ELEMENTI INDICATI
+			TIP: slice SENZA PARAMETRI ESEGUE SHALLOW COPY
+		
+		splice	COME SLICE MA QUESTO MUTA L'ARRAY DI PARTENZA, NEL SENSO CHE SPOSTA GLI ELEMENTI DALL'ARRAY DI PARTENZA A QUELLO DI ARRIVO. DI SOLITO LO SI USA PROPRIO PER MODIFICARE L'ARRAY DI PARTENZA. TIPICO USE CASE: TOGLIERE L'ULTIMO ELEMENTO DI UN ARRAY
+			arr.splice(-1)
+		splice(indice_start, num_elem_delete) CANCELLA DALL'ELEMENTO CON INDICE START E PER IL NUMERO DI ELEMENTI INDICATO. RESTITUISCE ARRAY CON ELEMENTI CANCELLATI. 
+		
+		reverse INVERTE ORDINE ELEMENTI NELL'ARRAY. ATTENZIONE MUTA L'ARRAY !!
+			arr.reverse()	MUTA arr INVERTENDO ORDINE ELEMENTI 
+		
+		concat 	CONCATENA ARRAY CON ARRAY IN INPUT. NON MUTA NIENTE !
+			const arr3 = arr.concat(arr2);
+			
+		join RESTITUSCE UNA STRINGA CON TUTTI GLI ELEMENTI DELL'ARRAY CONCATENATI CON LA STRINGA IN INPUT 
+			const str = arr3.join(" - ");
+				
+		at (ES2022) SERVE PER SPECIFICARE QUALE ELEMENTO SI VUOLE OTTENERE DALL'ARRAY, AL POSTO DELLA NOTAZIONE [indice]
+			const elem = arr[0]; //solita notazione
+			const elem = arr.at(0); //nuovo metodo 
+			UTILE IN ALCUNE CIRCOSTANZE, COME USE CASE OTTENERE ULTIMO ELEMENTO, L'INDICE PUO' ESSERE NEGATIVO COME CON slice E QUINDI PASSANDO -1 OTTENIAMO L'ULTIMO ELEMENTO
+			const ultimo = arr.at(-1);
+			
+			FUNZIONA ANCHE CON LE STRINGHE ! CHE SONO ARRAY !
+			const ultimostr = "giggi".at(-1) //restituisce "i" 
+			
+		sort ! 
+			
+	** LOOPING ARRAY CON FOREACH
+		array.forEach(callback(elemento))  E' UN METODO DEGLI ARRAY !! MA ANCHE DEI NODELIST RESTITUITI DA document.querySelector(All) 
+			mioarray.forEach(elemento => console.log(elemento));
+		array.forEach(callback(elemento,indice));		//versione con elemento e indice in input al callback
+		array.forEach(callback(elemento,indice,array));	//versione con anche l'array completo
+		NOTA BENE: CON forEach NON FUNZIONANO break e continue !!!!!
+		
+	** LOOPING MAP E SET CON FOREACH 
+		map.forEach(callback(elemento, key, map))
+		map.forEach(function (elemento, key, map) {
+			console.log(key, elemento);
+		});
+		
+		set.forEach(callback(elemento, key, map))  // uguale a map ! key = value !	PERCHE' NEI SET NON C'E' KEY O INDEX MA HANNO FATTO LA FIRMA FOREACH PER SET UGUALE ALLE ALTRE PER NON CREARE CONFUSIONE
+		set.forEach(function (elemento, key, map) {
+			console.log(key, elemento);
+		});
+		
+		****************** NOTA BENE: USARE NOTATION _ PER VARIABILI INUTILI
+		set.forEach(function (elemento, _, map) {
+			console.log(key, elemento);
+		});		
+		
+	** DATA TRANSFORMATION WITH MAP, FILTER, REDUCE ** 
+		VANTAGGIO RISPETTO AD USARE FOR OF LOOP: SI POSSONO CONCATENARE TRA LORO !
+		map 	e' UN METODO CHE RITORNA UN NUOVO ARRAY CONTENENTE I RISULTATI DELL'ESECUZIONE DELLA CALLBACK SU CIASCUN ELEMENTO DELL'ARRAY DI PARTENZA 
+			const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+			// converto euro in dollari usando il metodo map 
+			const eurToDollars = movements.map(euro => Math.round(euro * 1.1));		
+		filter	RITORNA UN NUOVO ARRAY CONTENENTE SOLO GLI ELEMENTI DELL'ARRAY DI PARTENZA CHE SODDISFANO LA CONDIZIONE DEL FILTRO 
+			// seleziono i soli importi maggiori di zero 
+			const deposits = movements.filter(mov => mov > 0);	
+		reduce	"riduce" GLI ELEMENTI DELL'ARRAY DI PARTENZA IN UN SINGOLO VALORE, PER ESEMPIO SOMMANDOLI TUTTI INSIEME MA ANCHE ALTRO ! QUINDI IL METODO RESTITUISCE UN VALORE, NON UN ARRAY !
+			NOTA BENE: 
+				* A DIFFERENZA DEGLI ALTRI METODI, IL CALLBACK DI REDUCE HA accumulator COME PRIMO PARAMETRO, LA VARIABILE CHE ACCUMULA L'OPERAZIONE RICHIESTA
+				* OLTRE AL CALLBACK HA UN SECONDO PARAMETRO PER INIZIALIZZARE L'ACCUMULATOR 
+			// somma tutti i valori di movements. in reduce accumula la sommatoria in acc, inizializzandolo a zero
+			const balance = movements.reduce((acc, mov, i, arr) => acc + mov, 0);	
+			// calcolo valore massimo con reduce
+			const maxmov = movements.reduce((acc, mov) => mov > acc ? mov : acc, movements[0]);  //inizializzare acc col primo valore dell'array, non con zeroo !!
+			// calcolo media di array di valori in humanAge
+			const averageHumanAge = humanAges.reduce((acc, humanAge, i, arr) => acc + humanAge / arr.length, 0);
+		
+		I TRE COMANDI SI POSSONO CONCATENARE TRA LORO PERCHE' MAP E FILTER RESTITUISCONO L'ARRAY RISULTANTE. 
+		ESEMPIO: DA ARRAY MOVIMENTI SELEZIONO DEPOSITI (> 0), LI CONVERTO IN DOLLARI (MOLTIPLICANDO PER 1.1) E SOMMO TUTTO CON REDUCE 
+			const balanceUSD = movements.filter(mov => mov > 0).map(mov => Math.round(mov * 1.1)).reduce((acc, mov) => acc + mov, 0);
+
+	*** ALTRI METODI DI ARRAY
+		** FIND 
+		array.find(callback(condizione)) restituisce il primo elemento dell'array che soddisfa la condizione indicata, non restituisce un array (come fa invece filter) 
+			const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+			const firstWithdraw = movements.find(mov => mov < 0);
+			console.log(firstWithdraw);  // mostra -400 
+			
+			NOTA BENE: torna undefined se la condizione non è soddisfatta ! cioè se non trova niente.
+		
+		** FINDINDEX 
+		array.findIndex(callback(condizione)) restituisce l'indice del primo elemento dell'array che soddisfa la condizione indicata, non restituisce quindi l'elemento stesso ma il suo indice
+			
+			NOTA BENE: assomiglia a indexOf(valore) MA E' MOLTO PIU' ELASTICO, LA CONDIZIONE PUO' ESSERE QUALSIASI COSA, MENTRE INDEXOF MI DICE SOLO SE C'E' UN DETERMINATO VALORE. 
+
+		** SOME 
+		array.some(callback(condizione)) restituisce true se c'è almeno un elemento nell'array che soddisfa la condizione indicata. 
+			const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+			const anyDeposits = movements.some(mov => mov > 0);
+			console.log("deposits ? ", anyDeposits);
+				restituisce true 
+			
+			NOTA BENE: simile a includes(valore) ma quest'ultimo funziona solo per equality. 
+			
+		** EVERY 
+		array.every(callback(condizione)) restituisce true se TUTTI gli elementi dell'array soddisfano la condizione indicata
+			const account4 = {
+			  owner: 'Sarah Smith',
+			  movements: [430, 1000, 700, 50, 90],
+			  interestRate: 1,
+			  pin: 4444,
+			};		
+			const allDeposits = account4.movements.every(mov => mov > 0);
+			console.log("all deposits ? ", allDeposits);			
+				restituisce true 
+			
+	*** NOTA BENE SU CALLBACK DEGLI ARRAY METHODS 
+		SI PUO' DICHIARARE SEPARATAMENTE E POI RIUTILIZZARE CON PIU' METHODS: 
+			const deposit = mov => mov > 0;
+			console.log(movements.filter(deposit));
+			console.log(movements.some(deposit));
+			console.log(movements.every(deposit));
+	
+	*** ANCORA ALTRI METODI DI ARRAY 
+		
+		** FLAT 
+		arr.flat(n-livello) restituisce un array risultante dal contenuto di tutti gli array dentro l'array. n.livello (default 1) indica di quanti livelli andare in profondita'. 
+			const arr1 = [[1, 2, 3], [4, 5, 6], 7, 8];
+			console.log(arr1.flat());		
+
+			// accounts è un array di oggetti, ciascuno dei quali ha la property movements valorizzata con un array di movimenti 
+			// per ottenere un array con tutti i movimenti di tutti gli account: 
+			// uso map per ottenere un array di array e poi flat() per "spianare" tutto in un solo array 
+			const allMovements = accounts.map(acc => acc.movements).flat();
+			console.log(allMovements);			
+		
+			NOTA BENE: ESEGUIRE map E POI flat() E' MOLTO COMUNE, PER CUI ESISTE IL METODO flatMap CON PERFORMANCE MIGLIORI ! MA FUNZIONA SOLO SU 1 LIVELLO DI PROFONDITA' !
+			
+		** FLATMAP 
+		arr.flatMap(callback(condizione)) esegue il map con la condizione indicata e poi sull'array risultante esegue il flat() 
+		
+			const allMovements = accounts.flatMap(acc => acc.movements);
+			console.log(allMovements);
+			
+			NOTA BENE: FUNZIONA SOLO CON 1 LIVELLO DI PROFONDITA', SE DEVO ANDARE PIU' IN PROFONDITA' DEVO FARE map e poi flat(n-livello) 
+			
+			
+	*** SORTING ARRAY 
+		
+		arr.sort() MUTA L'ARRAY DI PARTENZA ordina elementi dell'array in ordine alfabetico, TRATTA TUTTO COME STRINGHE QUINDI NON SORTA NUMERI CORRETTAMENTE 
+		
+		arr.sort((a,b) => {...}) PER SORTARE CON CRITERIO CUSTOM IN MODO ASCENDENTE. a = current value, b = next value 
+			LA CALLBACK: 
+				- SE RITORNA VALORE < 0 ALLORA A, B (MANTIENE L'ORDINE)
+				- SE RITORNA VALORE > 0 ALLORA B, A (SWITCH TRA VALORI) 
+				
+			movements.sort((a, b) => {
+			  if (a > b) return 1; // non importa che valore restituisco, basta che sia maggiore di 0, in tal caso i due valori vengono scambiati 
+			  if (a < b) return -1; // idem come sopra, non importa il valore restituito basta che sia minore di 0, in tal caso i due valori sono già ordinati e rimangono come sono 
+			})
+			SEMPLIFICATO: 
+			movements.sort((a, b) => a -b)
+			
+			PER ORDINARE IN MODO DESCRESCENTE BASTA INVERTIRE I VALORI RESTITUITI DALLA CALLBACK:
+			movements.sort((a, b) => {
+			  if (a > b) return -1; 
+			  if (a < b) return 1; 
+			})			
+			
+	*** CREARE ARRAY IN MODO PROGRAMMATICO 
+		new Array(1,2,3,4,5) // crea un array con 5 elementi numerici 
+		new Array(5) 	// crea un array con 5 elementi vuoti 
+		
+			NOTA : QUANDO ARRAY HA UN SOLO ARGOMENTO IN INPUT, VIENE INTESO COME IL NUMERO DI ELEMENTI DA INIZIALIZZARE. 
+			NOTA2: UN ARRAY INIZIALIZZATO CON Array(n) E' POSSIBILE VALORIZZARLO CON fill(valore) 
+			const arr3 = new Array(5)
+			arr3.fill("ciao");
+		
+		** FILL 
+		arr.fill(valore, pos-partenza, pos-fine-escluso) RIEMPIE L'ARRAY CON IL VALORE INDICATO, PARTENDO DALL'INDICE pos-partenza E FINENDO IN pos-fine-escluso SE INDICATI, ALTRIMENTI PARTE DA 0 
+		
+		** ARRAY.FROM()
+		Array.from({length: x}, callback)	CREA ARRAY DI LUNGHEZZA x INIZIALIZZANDO GLI ELEMENTI CON L'ESECUZIONE DELLA CALLBACK (UGUALE A QUELLA DI MAP!)
+			const arrx = Array.from({ length: 7 }, () => 1);	//crea array di 7 elementi inizializzati tutti con 1
+			const arry = Array.from({ length: 7 }, (cur, i) => i + 1);   	// crea array di 7 elementi inizializzati  1,2,3,4,5,6,7
+			
+		Array.from(<NodeList o altri oggetti iterabili come Set Map ecc..>, callback map) CONVERTE OGGETTO IN ARRAY APPLICANDO PER OGNI ELEMENTO IL CALLBACK DI TIPO MAP
+			const movementsUI = Array.from(document.querySelectorAll('.movements__value'))	//converte il NodeList restituito dal querySelectorAll in array
+				NOTA BENE: LA STESSA COSA SI PUO' FARE CON 
+					const movementsUI = [...document.querySelectorAll('.movements__value')]
+				MA POI DEVO FARE IL MAP SEPARATAMENTE, MENTRE CON ARRAY.FROM FACCIO TUTTO IN UN UNICA ISTRUZIONE:
+			const movementsUI = Array.from(document.querySelectorAll('.movements__value'), el => Number(el.innerT
+			ext.replace(" €",""))) //converte il NodeList in array applicando la callback che toglie spazio€ e converte in numero
+	
+	*** OPERAZIONI MATEMATICHE 
+	
+		Math.sqrt(num) RADICE QUADRATA 
+			NOTA BENE: num ** (1/2)   UGUALE !		
+		num ** (1/3)   RADICE AL CUBO 		
+		Math.max(elenco numeri)	NUMERO PIU' GRANDE 
+		Math.min(elenco numeri)	NUMERO PIU' PICCOLO
+		Math.PI  PI GRECO 
+			Math.PI * Number.parseFloat("10px") ** 2
+		
+		// arrotondamento interi
+		Math.trunc(numero intero): TRONCA I DECIMALI 
+		Math.round(numero intero ): ARROTONDAMENTO MATEMATICO 
+		Math.ceil(numero intero): ARROTONDAMENTO PER ECCESSO 
+		Math.floor(numero intero): ARROTONDAMENTO PER DIFETTO
+			NOTA BENE: floor e trunc danno lo stesso risultato con numeri positivi ma non con i negativi !!! trunc toglie semplicemente i decimali, floor con numero negativo arronda per eccesso (-23.3 > -24)
+				In questo senso floor è meglio di trunc perché funziona con numeri positivi e negativi
+		
+		// arrotondamento numeri decimals 
+		(numero).toFixed(num decimali) ARROTONDA ALLE CIFRE DECIMALI INDICATE
+			ATTENZIONE: RESTITUISCE UNA STRINGA !! PER OTTENERE UN NUMERO METTERE + DAVANTI ESEMPIO: +(2.345).toFixed(2) 	RESTITUISCE NUMERO 2.35
+			ATTENZIONE2: METTERE NUMERO TRA PARENTESI FA FARE BOXING A JS: QUINDI NUMERO PRIMITIVO DIVENTA OGGETTO E SU QUESTO OGGETTO VIENE INVOCATO METODO toFixed()
+			
+		%  REMAINDER OPERATOR 
+			(5 % 2) = 1 IL RESTO DI 5/2  (2*2=4 + 1 = 5)
+			
+			NOTA: UTILE PER DETERMINARE EVEN/ODD (PARI/DISPARI)
+			const isEven = n => n % 2 === 0;
+		
+		** NUMERIC SEPARATORS _ (DAL 2021) PER SCRIVERE NUMERI NEL CODICE IN MODO PIU' COMPRENSIBILE
+			NON FORMATTA NIENTE !! E' SOLO PER LA LEGGIBILITA' DEL CODICE, NON FORMATTA A RUNTIME
+			
+			const diameterSolarSystem = 287_460_000_000;
+		
+		** COSTANTE Number.MAX_SAFE_INTEGER	9.007.199.254.740.991
+		
+		** BigInt n PER RAPPRESENTARE NUMERI GRANDI QUANTO VOGLIAMO 
+			OPERATORE:   n alla fine del numero
+			COSTRUTTORE: BigInt(numero) 
+		console.log(111111111111111111111111111111111111111111n);
+		console.log(BigInt(1111111111111111111111111111111111111111));	ATTENZIONE IL COSTRUTTURE BigInt NON RESTITUISCE LO STESSO RISULTATO DI 11111111111111111n !!! BOH. 
+			
+			NOTE: 
+				. SI POSSONO FARE OPERAZIONI MATEMATICHE TRA NUMERI BIGINT 
+				. NON SI POSSO FARE TRA BIGINT E NUMERI NORMALI, BISOGNA PRIMA CONVERTIRE IL NUMERO NORMALE IN BIGINT USANDO IL COSTRUTTORE 
+				. SI POSSONO CONFRONTARE NUMERI BIGINT, ANCHE BIGINT E NORMALI MA ATTENZIONE, SE SI USA STRICT OPERATOR (=== ECC..) NON FUNZIONA PERCHE' I DUE TIPI NON SONO GLI STESSI 
+				. UN BIGINT SI PUO CONCATENARE AD UNA STRINGA 
+				. BIGINT NON FUNZIONANO CON LE FUNZIONI DI Math ESMPIO Math.sqrt(12n) RESTITUISCE ECCEZIONE
+				. ATTENZIONE ALLE DIVISIONI TRA BIGINT: IL RISULTATO E' UN ARROTONDAMENTO. ESEMPIO 10n / 3n = 3 INVECE CHE 3.33.. I DECIMALI VENGONO TAGLIATI
+				
+	****** DATE !!! 
+	
+		** CREARE DATE, 4 MODI !
+			1. new Date() 
+				const now = new Date();
+				console.log(now);
+				Fri Jan 12 2024 11:04:04 GMT+0100 (Ora standard dell’Europa centrale)
+				
+			2. PARSING DI UNA STRINGA 
+				const date = new Date('Fri Jan 12 2024 11:04:04');
+				console.log(date);
+				Fri Jan 12 2024 11:04:04 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				LA STRINGA PUO' ESSERE PIU' O MENO LIBERA 
+				const date = new Date('December 25 2023');
+				console.log(date);
+				Mon Dec 25 2023 00:00:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date('December 25 2023 11:30');
+				console.log(date);
+				Mon Dec 25 2023 11:30:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date('12 25 2023 11:30');
+				console.log(date);
+				Mon Dec 25 2023 11:30:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date('12/25/2023 11:30');
+				Mon Dec 25 2023 11:30:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date('12.25.2023 11:30');
+				Mon Dec 25 2023 11:30:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date('2019-11-18T21:31:17.178Z');		// FORMATO ISO   Z = UTC time 
+				Mon Nov 18 2019 22:31:17 GMT+0100 (Ora standard dell’Europa centrale)
+				
+			3. COSTRUTTORE new Date(ANNO, MESE, GIORNO, ORA, MIN, SEC) 
+				const date = new Date(2037, 10, 19, 15, 23, 5);
+				Thu Nov 19 2037 15:23:05 GMT+0100 (Ora standard dell’Europa centrale)
+					
+					NOTA BENE: 
+						. MESE E' ZERO BASED QUINDI 0=GENNAIO, 1=FEBBRAIO, 10=NOVEMBRE ECC.. 
+						. JS AUTOCORREGGE ERRORI PER ESEMPIO 2020, 10, 31 VIENE CORRETTO IN PRIMO DICEMBRE PERCHE' NOVEMBRE HA SOLO 30 GIORNI 
+						
+			4. COSTRUTTORE new Date(timestamp unix time in MILLISECONDI !)		PARTE DAL 1 GENNAIO 1970 
+				const date = new Date(0);
+				Thu Jan 01 1970 01:00:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date(3 * 24 * 60 * 60 * 1000);  //tre giorni dopo 1 gen 1970   numgg * ore * min * sec * 1000 per convertire in millisecondi 
+				Sun Jan 04 1970 01:00:00 GMT+0100 (Ora standard dell’Europa centrale)
+				
+				const date = new Date(1705055511000);
+				Fri Jan 12 2024 11:31:51 GMT+0100 (Ora standard dell’Europa centrale)
+				
+		** METODI DELL'OGGETTO DATE 
+			
+			getFullYear		RITORNA ANNO  NOTA BENE: NON USARE GETYEAR() !!! 				
+			getMonth()		RITORNA NUMERO MESE ZERO BASED 
+			getDate()		RITORNA NUMERO GIORNO: NON TUTTA LA DATA !! 
+			getDay()		RITORNA IL NUMERO DEL GIORNO NELLA SETTIMANA, PARTENDO CON 0=SUNDAY ECC...
+			getHours()		RITORNA ORA
+			getMinutes()    RITORNA MINUTI 
+			getSeconds()	RITORNA SECONDI 
+			toISOString()	FORMATTA NEL FORMATO ISO TIPO 2019-11-18T21:31:17.178Z		UTILE PER SALVARMI DATE DA QUALCHE PARTE 
+			getTime()		RITORNA DATA IN TIMESTAMP MILLISECONDS 
+			Date.now()		RITORNA TIMESTAMP DI ADESSO 
+			
+			setFullYear		IMPOSTA ANNO  NOTA BENE: NON USARE GETYEAR() !!! 				
+			setMonth()		IMPOSTA NUMERO MESE ZERO BASED 
+			setDate()		IMPOSTA NUMERO GIORNO
+			setDay()		IMPOSTA IL NUMERO DEL GIORNO NELLA SETTIMANA
+			setHours()		IMPOSTA ORA
+			setMinutes()    IMPOSTA MINUTI 
+			setSeconds()	IMPOSTA SECONDI			
+				
+				NOTA BENE: TUTTI QUESTI METODI HANNO AUTOCORRECTION, NEL SENSO CHE SE IMPOSTO 31 A NOVEMBRE LA DATA RISULTANTE E' 1 DICEMBRE 
+			
+		** INTERNATIONALIZATION 
+			padStart
+			
+		** INTERNATIONALIZING DATES WITH INTL API 
+			const now = new Date();
+			const strDate = Intl.DateTimeFormat('en-US'(è il locale)).format(now);	//formatta data in formato en USA MM/GG/AAAA
+			const strDate = Intl.DateTimeFormat('en-GB').format(now);	//formatta data in formato en GB  GG/MM/AAAA
+			lista locale:  http://www.lingoes.net/en/translator/langcode.htm
+			
+			aggiungere orario e altre info con oggetto options: 
+				NOTA: OPTIONS NON SERVE SE VOGLIO FORMATTATE SOLO DATA !
+				const options = {
+					hour: 'numeric',
+					minute: 'numeric',
+					day: 'numeric',
+					month: 'long'  // scrive per esteso es. 'August'
+					month: '2-digit' // scrive due cifre, padding con zero 
+					year: 'numeric/2-digit'
+					weekday: 'long'  // scrive giorno per esteso 
+					anche short/narrow 
+				}
+				const strDate = Intl.DateTimeFormat('en-US',options).format(now);	//formatta data in formato en USA MM/GG/AAAA e ora 
+			
+			** OTTENERE LOCALE DA BROWSER 
+			const locale = navigator.language;		// torna 'it' 
+			const strDate = Intl.DateTimeFormat(locale,options).format(now);
+			
+	*** NUMBERS !! 
+		const num = 3292892.10;
+		new Intl.NumberFormat('en-US').format(num); //3,292,892.10
+		new Intl.NumberFormat('de-DE').format(num); //3.292.892,10
+		new Intl.NumberFormat(navigator.language).format(num); 
+		
+		const options = {
+			style: "unit",
+			unit: "mile-per-hour"
+		}
+		new Intl.NumberFormat(navigator.language, options).format(num); 	// 3,292,892.10 mph (esempio)
+
+		const options = {
+			style: "unit",
+			unit: "celsius"
+		}
+		new Intl.NumberFormat(navigator.language, options).format(num); 	// 3,292,892.10 °C
+		
+		const options = {
+			style: "percent",
+			unit: "celsius" //ignorato
+		}
+		new Intl.NumberFormat(navigator.language, options).format(num); 	// 3,292,892.10 %
+		
+		const options = {
+			style: "currency",
+			unit: "celsius", //ignorato
+			currency: "EUR", // NOTA BENE: BISOGNA SPECIFICARLO PERCHE' NON VIENE DETERMINATO IN AUTOMATICO DAL LOCALE, DAL COUNTRY
+			useGrouping: false  //ATTIVA/DISATTIVA RAGGRUPPAMENTO CIFRE 
+		}
+		new Intl.NumberFormat(navigator.language, options).format(num); 	// 3,292,892.10 €
+		
+	*** SETTIMEOUT ! 
+	
+		setTimeout(callback, milliseconds, parametro1, parametro2, ...);		
+			NOTA: I PARAMETRI ALLA CALLBACK LI PASSO DOPO MILLISECONDS !
+		
+		setTimeout(() => console.log('ciao'), 5000);
+		
+		const parole = ['da', 'giggi'];
+		setTimeout((arg1, arg2) => console.log(`ciao ${arg1} ${arg2}`), 3000, ...parole);
+		
+		UN SETTIMEOUT SI PUO' ANNULLARE CON clearTimeout(nome-variabile-setTimeout) 
+	
+		if (parole.includes('giggi')) {
+		  console.log("trovato giggi, spengo myTimer");
+		  clearTimeout(myTimer);
+		}	
+		
+	*** SETINTERVAL ! 
+		ESEGUE CALLBACK OGNI X MILLISECONDS 
+		setInterval(() => console.log(new Date()),1000);	// stampa data-ora ogni secondo 
+
+	*** PROMISES 
+		NOTA BENE: 
+			SE ESEGUO UNA SERIE DI PROMISE UNO DIETRO L'ALTRO, CIASCUNO DIPENDENTE DALLA RISPOSTA DEL PRECEDENTE, NON INNESTARE UNO DENTRO IL THEN DELL'ALTRO MA METTERLI IN CHAIN. 
+				DAL SECONDO FETCH DEVO RITORNARE IL SUO RISULTATO IN MODO CHE VENGA ELABORATO DAL THEN SUCCESSIVO
+				fetch(API-1).then(data => {
+					return fetch(API-2);
+				}).then(data => {
+					return fetch(API-3);
+				}).then(data => {
+					....
+				});
+				
+		** MODI PER GESTIRE ERRORE PROMISE: 
+			1. PASSARE UNA CALLBACK AL THEN COME SECONDO PARAMETRO (IL PRIMO E' LA CALLBACK PER LA GESTIONE DELL'OK
+				.then(function(data) {
+					//gestione OK 
+				}, function(err) {
+					//gestione KO
+				});
+				OPPURE:
+				.then(data => //gestione OK, 
+					  err => //gestione KO);				
+				
+			2. USARE UN UNICA ISTRUZIONE CATCH, PER CATCHARE TUTTI GLI ERRORI DELLA PROMISE, ANCHE QUANDO CE NE SONO N IN CHAIN !
+				fetch(URL)	//restituisce promise
+				.then(data => //gestione OK)
+				.catch(err => //gestione KO);
+				
+			PER LA GESTIONE DELL'ERRORE MEGLIO PREPARARE UNA FUNCTION CHE IN INPUT HA IL MESSAGGIO E CHE POI MOSTRA IN UI 
+				fetch(URL)	//restituisce promise
+				.then(data => //gestione OK)
+				.catch(err => renderError(err.message));			
+				
+				NOTA: err E' UN OGGETTO RESTITUITO DAL PROMISE, HA SEMPRE LA PROPERTY message 
+				
+			NOTA BENE: 
+				fetch(URL)	//restituisce promise
+				.then(data => //gestione OK)
+				.catch(err => renderError(err.message));			
+				.finally(() => ....) PER ESEGUIRE CODICE INDIPENDENTEMENTE DALL'ESITO DEL PROMISE 
+						             PER ESEMPIO NASCONDERE UNO SPINNER CHE E' STATO MOSTRATO ALL'INIZIO DEL PROMISE 
+				
+			** ALL'INTERNO DEL THEN POSSO FARE IL THROW DI UN NUOVO ERRORE USANDO L'OGGETTO ERROR('MESSAGGIO')
+				THROW TERMINA IMMEDIATAMENTE L'ESECUZIONE DELLA FUNCTION, COME FA RETURN. 
+				ESEGUIRE UN THROW NEW ERROR DENTRO UN THEN PROVOCA LA REJECT CHE QUINDI FINISCE NEL CATCH !
+					NOTA: ANCHE SE LO FA IL PRIMO THEN DI UNA CATENA, L'ESECUZIONE VIENE INTERROTTA, SKIPPA TUTTA LA CATENA E ARRIVA AL CATCH. 
+					throw new Error('message') CREA UN OGGETTO err CON PROPERTY MESSAGE CHE VIENE QUINDI RESTITUITO DAL CATCH 
+			
+				if (...) 
+					throw new Error('messaggio');
+				
+		** ESECUZIONE DELLE PROMISE CON L'EVENT LOOP
+			LE PROMISE VENGONO ESEGUITE IN UNA CODA DEDICATA: MICROTASKS QUEUE, CHE HA PRIORITA' RISPETTO ALLA CALLBACK QUEUE (USATA PER ESEMPIO DAL SETTIMEOUT). 
+			QUINDI A PARITA' DI CONDIZIONI, VENGONO ESEGUITE PRIMA TUTTE LE PROMISE IN CODA MICROTASKS, POI LE CALLBACK IN CALLBACK QUEUE. 
+				QUINDI SE C'E' PROMISE CHE DURA MOLTO, RALLENTA ESECUZIONE DELLE CALLBACK ! 
+				
+		** CREARE PROMISE 
+			const esempio = new Promise(function(resolve,reject) {		//= executor function
+				....
+				if (ok)
+				   resolve(oggetto restituito al then)		//eseguo la resolve function (passata alla executor function) che marca la Promise come "fullfilled"
+				else 
+				   reject('oggetto restituito al catch (un messaggio)')		//eseguo la reject function (passata alla executor function) che marca la Promise come "rejected"
+				   reject(new Error('messaggio))
+			});
+			
+			esempio
+				.then(res => console.log(res))
+				.catch(err => console.error(err));
+			
+		** ASYNC FUNCTION E AWAIT
+			CON async DICHIARO CHE UNA FUNZIONE E' ASINCRONA, GIRA IN BACKGROUND. 
+				NOTA BENE: ASYNC FUNCTION TORNANO SEMPRE UN PROMISE !! QUELLO CHE RESTITUISCO CON RETURN VIENE TORNATO NEL PROMISE SUCCESSFULL (FULLFILLED) 
+						   QUINDI L'INVOCAZIONE DI UNA ASYNC FUNCTION CHE RITORNA QUALCOSA DEVE ESSERE SEGUITA DA THEN.. 
+				ATTENZIONE: SE AVVIENE ALL'INTERNO DELLA ASYNC FUNCTION AVVIENE UN ERRORE **CATCHATO**, LA PROMISE RESTITUITA NON SARA' IN CATCH MA SEMPRE IN THEN !!
+					SE AVVIENE UN ERRORE CATCHATO CON TRY..CATCH, LA PROMISE RESTITUITA E' SEMPRE FULLFILLED 
+					PER OTTENERE PROMISE IN ERRORE DEVO FARE IL RETHROW DELL'ERRORE DENTRO IL CATCH 
+						   
+			DENTRO LA FUNCTION POSSO AVERE UNO O PIU' await DI PROMISE 
+			AWAIT STOPPA L'ESECUZIONE DELLA FUNCTION ASINCRONA FINCHE' LA PROMISE NON E' CONCLUSA. 
+				NOTA: LO STOP DATO DALL'AWAIT NON BLOCCA TUTTO PERCHE' E' ALL'INTERNO DI UNA FUNCTION ASINCRONA ! NON BLOCCA IL CALL STACK DI JS. 
+			
+			IN PRATICA POSSO ESEGUIRE API ASINCRONE COME SE FOSSERO SINCRONE, SENZA THEN ECC.. ASSEGNANDO IL RISULTATO AD UNA VARIABILE. 
+				ATTENZIONE: ASYNC/AWAIT E' UN MODO ELEGANTE PER ESEGUIRE PROMISE E THEN/CATCH SENZA USARLI DIRETTAMENTE. VENGONO COMUNQUE USATI DA JS 
+				
+			const whereAmI = async function (country) {
+			  const res = await fetch(`https://countries-api-836d.onrender.com/countries/${country}`);
+			  console.log(res);
+			}
+							
+			** GESTIONE ERRORI. 
+				SENZA THEN NON ABBIAMO IL CATCH, SERVE UN MODO PER INTERCETTARE ERRORI. 
+				USARE try ...catch !
+				
+					try {
+						const res = await fetch(`https://countries-api-836d.onrender.com/countries/${country}`);
+						if (!res.ok) throw new Error('errore');
+			
+					} catch(err) {
+						... faccio qualcosa in caso di errore 
+					}
+				
+			** ESECUZIONE DI UNA ASYNC FUNCTION CHE ESEGUE RETURN DI PROMISE, DENTRO UNA IIFE (IMMEDIATELY INVOKED FUNCTION EXPRESSIONS (IIFE)) PER USARE AWAIT INVECE CHE THEN..CATCH
+			(async function(){
+				try{
+					const res = await whereAmI();					
+					console.log(res);
+				} catch(err){
+					console.error(err);					
+				}
+				console.log("roba da mostrare alla fine tipo finally")
+			})();
+			
+			** ESECUZIONE DI PIU' PROMISE IN PARALLELO 
+				Promise.all(array di promise) QUANDO I PROMISE NON DIPENDONO L'UNO DALL'ALTRO, DEVONO GIRARE IN PARALLELO ! ALTRIMENTI CON AWAIT VENGONO ESEGUITI UNO DOPO L'ALTRO.
+					E' UN COMBINATOR 
+					
+				const data = await Promise.all(promise1, promise2, promise3, ecc.. è un array) 	//torna un nuovo promise 
+					NOTA BENE: SE UNO DEI PROMISE VA IN ERRORE, TUTTO IL PROMISE.ALL VA IN ERRORE 
+					
+					ANCHE L'OGGETTO RESTITUITO E' UN ARRAY
+				
+			** ALTRI COMBINATOR 
+				RACE 
+					un promise = Promise.race(array of promise) 		RITORNA LA RISPOSTA (UN PROMISE) QUANDO IL PRIMO DEI PROMISE TERMINA BENE O MALE (QUINDI VINCE IL RACE )
+														IL PROMISE CHE "VINCE" VIENE RESTITUITO COME RISULTATO, VINCE QUELLO CHE IMPIEGA MENO TEMPO, NON IMPORTA SE FINISCE BENE O MALE !
+														
+						RACE SI PUO' USARE PER GESTIRE UN TIMEOUT QUANDO SI USA UNA PROMISE, PER EVITARE CHE DURI TROPPO, MAGARI PERCHE' L'UTENTE HA POOR CONNECTION. 
+						IN PRATICA AL RACE PASSO LA PROMISE CHE VOGLIO ESEGUIRE E UNA FUNCTION CHE RESTITUISCE UN PROMISE IN ERROR DOPO X SECONDI. 
+						SE LA PROMISE VERA IMPIEGA PIU' TEMPO DELLA PROMISE COL TIMEOUT, LA RACE RESTITUIRA' IL PROMISE TIMEOUT 
+						
+						const timeout = function(sec) {
+							return new Promise(function(_,reject) {			//non usando resolve sostituisco il parametro con _ ma è solo una convenzione per dire che non lo uso !
+								setTimeout(function(){
+									reject(new Error('request took too long!');
+								},sec*1000);
+							});						
+						}
+						
+						Promise.race([promise..,timeout])
+							.then(res => console.log(res))
+							.catch(err => console.error(err));
+
+				ALLSETTLED
+					array of promise = Promise.allSettled(array of promise)		E' COME PROMISE.ALL SOLO CHE QUESTO NON APPLICA SHORT CIRCUIT, CIOE' ANCHE SE UNO O PIU' PROMISE VANNO IN ERRORE RITORNA L'ARRAY CON I PROMISE 	
+					
+				ANY 
+					promise fullfilled = Promise.any(array di promise)			RITORNA IL PRIMO PROMISE FULLFILLED PIU' VELOCE(OK), E' SIMILE A RACE MA I PROMISE IN ERRORE VENGONO IGNORATI
+					
+					
+	*** DOM 
+	
+		E' UN ALBERO COMPOSTO DA NODES. 
+		OGNI NODE E' UN OGGETTO JS, 4 TIPI: 
+			- ELEMENT 	QUALUNQUE ELEMENTO, P, DIV, ECC.. ESPONE MOLTI METODI E PROPERTIES: innerHTML, classList, children, parentElement, append(), remove(), insertAdjacentHTML(), querySelector(), closest(), matches(), scrollIntoView(), setAttribute() E MOLTI ALTRI !
+				INTERNAMENTE HA ELEMENTO CHILD: HTMLElement
+					IL QUALE HA ALTRI CHILD ELEMENT, UNO PER OGNI TIPO DI ELEMENTO CHE ESISTE IN HTML:
+					- HTMLButtonElement
+					- HTMLDivElement, 
+					- HTMLLinkElement, 
+					- .... 
+					OGNUNO DI QUESTI CHILD HA UNIQUE METHODS E PROPERTIES !					
+			- TEXT		ESEMPIO TAG P 
+			- COMMENT	<!-- COMMENTO -->
+			- DOCUMENT 	
+			
+		TUTTI I CHILD TYPES HANNO ACCESSO A METODI E PROPERTY DEI PARENT ELEMENTS TRAMITE L'EREDITARIETA' 
+		QUINDI PER ESEMPIO UN HTMLButtonElement E' ANCHE UN HTMLElement E ANCHE UN Node
+		
+		IMPORTANTE: IL METODO querySelector() E' DISPONIBILE SIA NEL TIPO document CHE NEL TIPO ELEMENT (E QUINDI ANCHE NEI SUOI SOTTOTIPI) 
+		
+		NODE E' PARENT DI EventTarget 
+		WINDOW E' PARENT DI EventTarget
+		EventTarget E' L'OGGETTO ABSTRACT RADICE CHE ESPONE I METODI .addEventListener() e .removeEventListener() QUINDI TUTTI I SOTTOTIPI LI EREDITANO. 
+				
+		** SELEZIONARE ELEMENTI 
+			document.documentElement		// document non è sufficiente per selezionare l'intero documento, per esempio per applicarvi un css, ma bisogno usare documentElement
+			document.head 
+			document.body
+			document.querySelector(selettore) 		// restituisce primo elemento trovato 
+			document.querySelectorAll(selettore) 	// restituisce NodeList con tutti gli elementi trovati 
+			document.getElementById(id) 		 	// restituisce elemento con id specificato, senza indicare selettore #
+			document.getElementsByTagName(tipo)		// restituisce HTMLCollection con gli elementi per tipo elemento in input (button, div, a, p, ecc..) 
+													   IMPORTANTISSIMO: HTMLCollection è un tipo di elenco CHE VIENE AGGIORNATO AUTOMATICAMENTE quando cambia il DOM. 
+															      Se per esempio elimino un bottone ed eseguo il metodo avrò l'elenco dei button SENZA quello che ho eliminato. 
+																  Con NodeList non succede, avrò sempre lo stesso elenco, compreso l'elemento eliminato !
+														          Può essere convertito in Array con Array.from, come NodeList 
+            
+			document.getElementsByClassName(class)	// restituisce HTMLCollection con elenco elementi con la classe in input, ANCHE QUESTO ELENCO SI AGGIORNA IN AUTOMATICO 
+			
+															
+		** CREARE E INSERIRE ELEMENTI 
+			elemento.insertAdjacentHTML(posizione, testo)	// inserisce testo nella posizione indicata (beforebegin, afterbegin, beforeend, afterend) 
+			document.createElement(tipoElemento)			// crea un elemento del tipo indicato, per esempio div 
+			element.classList								// restituisce elenco di classi dell'elemento 
+			element.classList.add('nome-classe')			// aggiunge una classe all'elemento, vedi elenco metodi sopra cercando classList 
+			element.prepend(elemento)						// aggiunge l'elemento come primo child di element 
+			element.append(elemento)						// aggiunge elemento come ultimo child di element 
+				NOTA BENE: UN ELEMENTO PUO' ESISTERE NEL DOM IN UN UNICO POSTO, NON IN PIU' POSTI SIMULTANEAMENTE, PER CUI SE ESEGUO PREPEND E POI APPEND DI UNO STESSO ELEMENTO, QUESTO VIENE POSTATO NEL DOM DALL'INIZIO ALLA FINE DI ELEMENT. PER COPIARE UN ELEMENTO, INVECE CHE SPOSTARLO, BISOGNA USARE cloneNode PER COPIARLO 
+					element.prepend(elemento)
+					element.append(elemento.cloneNode(true))	// se true clona anche tutti i child di elemento 
+					
+			element.before(elemento)						// inserisce prima 
+			element.after(elemento)							// inserisce dopo 
+			
+		** DELETE ELEMENT 
+			elemento.remove()								// NOTA: METODO NUOVO, PRIMA SI FACEVA element.parentElement.removeChild(element) 
+			
+		** STYLES ! 
+			elemento.style.attributo=valore 				// VALORI DELLE PROPERTY DI STYLE SONO GLI STESSI CHE SI USA NEI CSS 
+				message.style.backgroundColor = '#37383d';	
+				message.style.width = '120%';				
+					NOTA BENE: GLI STYLE IMPOSTATI CON L'ATTRIBUTO STYLE SONO "INLINE" STYLE, INSERITI DIRETTAMENTE NEL DOM DA ME IN MODO MANUALE, PROGRAMMATICO 
+							   NEL CONSEGUE CHE SE USO STYLE.QUALCOSA PER LEGGERE UN ATTRIBUTO POTRO' LEGGERE SOLO QUELLI CHE HO IMPOSTATO MANUALMENTE E CHE SI VEDONO NEL DOM, TUTTI GLI ALTRI SARANNO VUOTI 
+							   SE USO STYLE.QUALCOSA PER LEGGERE UN ATTRIBUTO DI UN CLASS IMPOSTATO COL CSS NON OTTERRO' NIENTE !
+							   SE VOGLIO OTTENERE TUTTI GLI STYLE DI UN ELEMENTO DEVO USARE IL METODO (window.)getComputedStyle(elemento) CHE MI TORNA UN OGGETTO DI TIPO CSSStyleDeclaration CON TUTTE LE PROPERTY E I RELATIVI VALUE, NON SOLO QUELLE IMPOSTATE CON I CSS, ANCHE QUELLE CHE HA CALCOLATO IL BROWSER IN AUTONOMIA (DA CUI CALCULATED..) 
+				message.style.height = parseFloat(getComputedStyle(message).height) + 40 + 'px'; //aggiunge 40 pixel all'height dell'elemento message calcolato dal browser 
+				
+			** CSS Custom Properties (vedi all'inizio) 
+			Sono modificabili da JS : document.documentElement.style.setProperty(nomevariabile, valore);
+				document.documentElement.style.setProperty('--color-primary', 'orangered');			
+			Si possono usare in JS per impostare style, scrivendo var(--...) tra apici 
+				element.closest('.header').style.background = 'var(--color-primary)';
+							   
+		** ATTRIBUTES 
+			POSSO LEGGERE E MODIFICARE TUTTE LE PROPERTY STANDARD DI UN ELEMENTO CON LA SINTASSI elemento.attributo, MA NON QUELLI CUSTOM CHE HO INSERITO MANUALMENTE NEL CODICE HTML. 
+				PER GLI ATTRIBUTI CUSTOM C'E' getAttribute('attributocustom')
+				const logo = document.querySelector('.logo');
+				logo.src 
+					NOTA BENE: src e href restituiscono l'url assoluto, se voglio l'url relativo uso elemento.getAttribute('src') o elemento.getAttribute('href')
+				logo.alt
+				logo.className	// ritorna le classi dell'elemento, 
+				SE LOGO HA L'ATTRIBUTO CUSTOM designer 
+				logo.designer 	// restituisce undefined 
+				logo.getAttribute('designer')	// RESTITUISCE IL VALORE ! 
+				logo.setAttribute('writtenby', 'giggi')	// IMPOSTA ATTRIBUTO CUSTOM CON VALORE SPECIFICATO 
+		
+		** DATA ATTRIBUTES 
+			SPECIALI ATTRIBUTI CUSTOM CHE INIZIANO CON data-
+				esempio:  <button class="btn" data-user-tab="1" >
+			USATI PER SALVARE NELLA UI INFORMAZIONI UTILI 
+			PER INTERAGIRVI CON JS 
+				elemento.dataset.attributoCustomSenzaDataInCamelCase :)
+					console.log(button.dataset.userTab) //torna "1"
+					
+		** ROBA UTILE PER DIMENSIONE/POSIZIONE/VIEWPORT
+			elemento.getBoundingClientRect()	// restituisce coordinate e distanze dell'elemento rispetto al viewport corrente 
+			DEPRECATO: window.pageXOffset, window.pageYOffset	//posizione corrente del viewport visibile rispetto alla pagina (X = orizzontale, Y= verticale) 
+			window.scrollX, window.scrollY	//posizione corrente del viewport visibile rispetto alla pagina (X = orizzontale, Y= verticale) 
+			document.documentElement.clientHeight, document.documentElement.clientWidth	//dimensione corrente del viewport del contenuto (escluse scroll bars !)
+			
+			* ESEGUIRE SCROLL AD UNA POSIZIONE IN PAGINA
+			window.scrollTo(elemento.left + window.pageXOffset, elemento.top + window.pageYOffset);		//metodo global per eseguire scroll ad una posizione (x, y), di solito quella di un elemento 
+				MEGLIO, CON ANIMAZIONE: 
+			window.scrollTo({
+				left: elemento.left + window.scrollX,
+				top: elemento.top + window.scrollY,
+				behavior: 'smooth'		//tipo animazione: smooth, auto, instant
+			});
+				ANCORA MEGLIO: 
+			elementotarget.scrollIntoView({
+			    behavior: "smooth"
+			});
+			
+	*** EVENTI 
+			
+		GLI EVENTI SI VERIFICANO ANCHE SE NON C'E' UN LISTENER DEDICATO A LORO. PER ESEMPIO IL CLICK DI UN BOTTONE VIENE TRIGGERATO QUANDO L'UTENTE CLICCA, ANCHE SE NON C'E' UN BUTTON.ADDEVENTLISTENER. 
+			
+		mouseenter 	SI VERIFICA QUANDO IL MOUSE "ENTRA" IN UN ELEMENTO 
+			
+		**	AGGIUNGERE UN EVENTLISTERER: 
+			1. addEventlistener(tipoevento,callback,CAPTURING TRUE/(FALSE=DEFAULT)	NUOVA MANIERA, MIGLIORE PERCHE' 
+																		POSSO AGGIUNGERE PIU' FUNCTION ALLO STESSO EVENTO MENTRE COL METODO 2 NON POSSO 
+																		POSSO RIMUOVERE UN EVENTLISTENER DOPO AVERLO AGGIUNTO (COL METODO 2 NON SI PUO')
+																		POSSO CONCATENARLO AL QUERYSELECTOR 
+																		document.querySelector('.form').addEventListener('mouseover',function(e){...});
+																		
+					ROBA UTILE: 
+					* this NELLA FUNCTION PUNTA ALL'ELEMENTO SUL QUALE HO FATTO ADDEVENTLISTENER
+					* e.target PUNTA ALL'ELEMENTO DA CUI È PARTITO L'EVENTO, CHE PUÒ ESSERE DIVERSO DALL'ELEMENTO SUL QUALE È ATTIVO L'ADDEVENTLISTENER PER EFFETTO DEL BUBBLING (VEDI SOTTO) 
+						CIOE' SE HO AGGIUNTO UN EVENT LISTENER CLICK AD UN TAG A E AL DIV CHE LO CONTIENE E CLICCO SULL'ANCHOR, IN ENTRAMBE LE FUNCTION e.target PUNTA ALL'ANCHOR MA IN CIASCUNA FUNCTION IL THIS PUNTA RISPETTIVAMENTE ALL'ANCHOR E AL DIV 
+					* e.currentTarget = this = L'ELEMENTO SU CUI E' ATTACCATO L'EVENTLISTENER, CIOE' L'ELEMENTO ATTRAVERSATO DURANTE LA FASE DI BUBBLING 
+					* IL TERZO PARAMETRO DI SOLITO NON SI METTE E IL DEFAULT E' FALSE: VUOL DIRE CHE L'EVENT LISTENER VERRA' CONSIDERATO NELLA FASE BUBBLING (IN RISALITA DOPO EVENT TARGET). 
+						SE SPECIFICO TRUE, VERRA' INVECE CONSIDERATO NELLA PRIMA FASE, QUELLA DI CAPTURING, PRIMA DEL TARGET EVENT, IN "DISCESA". 
+						IN REALTA' QUESTA COSA DEL CAPTURING E BUBBLING E' ROBA VECCHIA, RISALENTE A QUANDI I BROWSER GESTIVANO GLI EVENTI IN MODO DIVERSO. ORA NON E' PRATICAMENTE PIU' USATO. 
+			2. elemento.on{evento} = function;		VECCHIA MANIERA
+					elemento.onmouseenter = function(e) {
+						...
+					}
+					elemento.onclick = function(e) {
+						...
+					}
+			3. (VECCHISSIMO) IN HTML <h1 onclick="alert('ciao da giggi')" ... 
+			
+		** RIMUOVERE UN EVENT LISTENER: SI PUO' FARE SOLO CON EVENTLISTENER AGGIUNTI CON ADDEVENTLISTENER E CON NAMED FUNCTION 
+			const clickOnButton = function(e) {
+				//gestione click 
+			}
+			button.addEventListener('click, clickOnButton);
+			
+			button.removeEventListener('click', clickOnButton);		//SI' E' GIUSTO, SI PASSA LA STESSA FUNCTION CHE GESTISCE L'EVENTO 
+			
+		** PASSARE PARAMETRI ALL'EVENT LISTENER
+			SE VOGLIO INVOCARE UNA NAMED FUNCTION, ESTERNA ALL'EVENT LISTENER INVECE CHE INVOCARE QUELLA ANONIMA, E PASSARLE DEI PARAMETRI NON LO POSSO FARE DICHIARANDO I PARAMETRI NELLA FUNCTION PERCHE' L'EVENT LISTENER SI ASPETTA UNA CALLBACK CON IL SOLO PARAMETRO DELL'EVENTO. 
+			POSSO PERO' SFRUTTARE L'OGGETTO THIS DELLA FUNCTION ESTERNA, IMPOSTANDOLO E PASSANDO AL METODO BIND CHE MI RESTITUSCE UNA FUNCTION(E) CON IL THIS VALORIZZATO COME VOGLIO IO, CON TUTTI I PARAMETRI CHE VOGLIO !
+			const handleClick = function(e) {		// devo per forza dichiarare solo il parametro e
+				console.log(this.param);
+			}
+			elemento.addEventlistener('click', handleClick.bind({param: "giggi"});
+			esecuzione: click su elemento
+					     > giggi
+						 
+				const handleClick = function (e) {		// devo per forza dichiarare solo il parametro e
+				  console.log(e.target.src, this.param);
+				}
+				document.querySelector('.nav__logo').addEventListener('click', handleClick.bind({ param: "giggi" }));						 
+				console: http://127.0.0.1:5500/13-Advanced-DOM-Bankist/starter/img/logo.png giggi
+			
+		** BUBBLING AND CAPTURING 
+			UN CERTO ELEMENTO SU CUI VOGLIO GESTIRE IL CLICK, PER ESEMPIO, E' SOTTO UNA CERTA GERARCHIA DI ELEMENTI PADRI. 
+			* CAPTURING PHASE: 
+				QUANDO CLICCO SU QUESTO ELEMENTO, L'EVENTO CLICK SI GENERA PER PRIMA COSA NELL'ELEMENTO RADICE (DOCUMENT), POI NELL'ELEMENTO SOTTOSTANTE (ELEMENT HTML), POI BODY, ECC.. FINO AD ARRIVARE ALL'ELEMENTO CHE E' STATO CLICCATO, IL **TARGET**. A QUESTO PUNTO..
+			* TARGET PHASE 
+				GLI EVENTI, TRA CUI IL CLICK, POSSONO ESSERE GESTITI SULL'ELEMENTO CON GLI EVENT LISTENER 
+				POI..
+			* BUBBLING PHASE 
+				L'EVENTO CLICK RISALE IN MODO GERARCHICO FINO AL ROOT DEL DOM (MA NON SUI SIBLING !), E' COME SE FOSSE ACCADUTO ANCHE SU TUTTI I PARENT DELL'ELEMENTO DI PARTENZA.
+				QUESTO VUOL DIRE CHE SE CI SONO EVENT LISTENER PER LO STESSO EVENTO SU UNO DEI PARENT, VENGONO ESEGUITI ANCH'ESSI !!
+			* NOTA BENE: 
+				DI DEFAULT GLI EVENT LISTENER OPERANO SOLO NEL BUBBLING PHASE MA SI POSSONO PREDISPORRE ANCHE PER STARE IN ASCOLTO DI EVENTI DURANTE IL CAPTURING PHASE (UNA SORTA DI "BEFORE"..).
+				NON TUTTI GLI EVENTI SUPPORTATI DA JS HANNO CAPTURING E BUBBLING PHASE !
+			
+			****>  PROPAGATE = CAPTURING + BUBBLING !!!
+			
+			* INTERROMPERE LA PROPAGAZIONE E IL BUBBLING, MA ATTENZIONE, NON E' BEST PRATICA !!!!!!! SI FA SOLO IN SITUAZIONI PARTICOLARI DI COMPLESSITA'  
+				e.stopPropagation();
+				
+			* IMPOSTARE ADDEVENTLISTENER SU CAPTURING INVECE CHE BUBBLING (DEFAULT), TERZO PARAMETRO ADDEVENTLISTENER = TRUE 
+				elemento.addEventListener(evento, callback, true); 
+				
+				PRATICAMENTE CON TRUE L'EVENT LISTENER VIENE ESEGUITO IN "DISCESA", PRIMA DEL EVENT TARGET
+				IN REALTA' QUESTA COSA DEL CAPTURING E BUBBLING E' ROBA VECCHIA, RISALENTE A QUANDI I BROWSER GESTIVANO GLI EVENTI IN MODO DIVERSO. ORA NON E' PRATICAMENTE PIU' USATO. 
+				QUINDI 99 SU 100 SI USA FALSE (BUBBLING), OMESSO. 
+				
+		** EVENT DELEGATION
+			SFRUTTO BUBBLING PHASE PER ATTACCARE UN EVENT LISTENER AD UN CONTAINER DEGLI ELEMENTI SUI QUALI VOGLIO GESTIRE L'EVENTO, INVECE CHE ATTACCARE UN EVENT LISTENER (E UNA FUNCTION UGUALE!) A CIASCUNO DI LORO. USANDO E.TARGET NELLA FUNCTION POSSO ACCEDERE ALLE PROPRIETA' DI CIASCUN ELEMENTO DA CUI E' PARTITO L'EVENTO, IN UN UNICO EVENT LISTENER ATTACCATO AL CONTAINER. 
+			**> IMPORTANTE ! NELLA FUNCTION DELL'EVENTLISTENER DEVO ASSICURARMI CHE L'EVENT TARGET CHE STO ELABORANDO E' QUELLO GIUSTO, UN CONTAINER POTREBBE AVERE ELEMENTI DI TIPO DIVERSO, CON EVENTI DIVERSI. LO POSSO FARE PER ESEMPIO VERIFICANDO SE NELL CLASSLIST C'E' UNA CLASSE CHE LO IDENTIFICA. 
+			I PASSI SONO: 
+			1. ADD EVENT LISTENER TO THE COMMON PARENT ELEMENT 
+			2. DETERMINE WHAT ELEMENT ORIGINATED THE EVENT (MATCHING STRATEGY) 
+			IMPOSTARE CORRETTAMENTE UN MATCHING STRATEGY, QUINDI IDENTIFICARE L'ELEMENTO (TIPO UNA CLASSE) CHE IDENTIFICA IN MODO UNIVOCO GLI ELEMENTI DA ISOLARE, E' L'ELEMENTO PIU' COMPLESSO DELL'EVENT DELEGATION 
+			
+		** DOM TRAVERSING 
+			PARTENDO DA UN ELEMENTO, SELEZIONARE ELEMENTO PADRE, GLI ELEMENTI FIGLI O QUELLI ALLO STESSO LIVELLO. RICORDIAMO CHE IL DOM E' UN ALBERO. COME IL DL1 :) TIPO GNP 
+			
+			* SCENDERE (CHILDREN)
+			elemento.querySelectorAll(selettore) 	RESTITUISCE NodeList CON TUTTI GLI ELEMENTI CHE SODDISFANO IL SELETTORE E CHE SONO FIGLI ANCHE INDIRETTI DI ELEMENTO. 
+			elemento.childNodes						RESTITUISCE NodeList CON I SOLI NODI DIRETTI FIGLI DI ELEMENTO, DI TUTTI I TIPI (TEXT, COMMENT, SPAN, ECC..) 
+			elemento.children 						RESTITUISCE HTMLCollection CON I SOLI ELEMENTI DIRETTI FIGLI DI ELEMENTO, QUINDI SOLO DI TIPO ELEMENT 
+			elemento.firstElementChild				RESTITUISCE IL PRIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE IL PRIMO RESTITUITO DA elemento.children
+			elemento.lastElementChild				RESTITUISCE L'ULTIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE L'ULTIMOI RESTITUITO DA elemento.children
+			
+			* SALIRE (PARENTS) 
+			elemento.parentNode						RESTITUISCE IL NODO PADRE DIRETTO
+			elemento.parentElement					RESTITUISCE L'ELEMENTO PADRE DIRETTO 
+			elemento.closest(selettore)				RESTITUISCE L'ELEMENTO PADRE DEL TIPO INDICATO DAL SELETTORE, DIRETTO O INDIRETTO, NON IMPORTA DI QUALE LIVELLO. ANCHE SE STESSO !
+													PRATICAMENTE E' UGUALE A QUERYSELECTOR MA VERSO L'ALTO INVECE CHE VERSO IL BASSO 
+				document.querySelector('.header__img').closest('.header').style.background = 'var(--color-tertiary)'
+				h1.closest('h1') 	//TORNA SE STESSO 
+			
+			* STESSO LIVELLO (SIBLINGS) 
+			elemento.previousElementSibling			ELEMENTO PIU' VICINO A "SINISTRA" 
+			elemento.nextElementSibling				ELEMENTO PIU' VICINO A "DESTRA" 
+			elemento.previousSibling				NODO PIU' VICINO A SINISTRA 
+			elemento.nextSibling					NODO PIU' VICINO A DESTRA 
+				NOTA BENE: NON ESISTONO METODI CHE RESTITUISCONO I SIBLING INDIPENDENTEMENTE DALLA LORO POSIZIONE. 
+				           POSSO USARE IL TRUCCO DI RISALIRE AL PADRE E POI OTTENERE TUTTI I FIGLI 
+						   elemento.parentElement.children 
+						   esempio di modifica di tutti i sibling di un elemnto h1 ad eccezione di se stesso: 
+						   // faccio spread di HTMLCollection in array e poi forEach
+						   [...h1.parentElement.children].forEach(function(el){
+							el !== h1 && el.style.transform = "scale(0.5)";
+						   });
+
+		** API IntersectionObserver 
+			E' UN API CHE MI PERMETTE DI OSSERVARE UN ELEMENTO DEL DOM E DI INVOCARE UN CALLBACK QUANDO QUESTO ELEMENTO VIENE "INTERSECATO" DA UN ALTRO ELEMENTO, CHE PUO' ESSERE IL VIEWPORT. 
+			QUANDO FACCIO SCROLL IN PRATICA MUOVO IL VIEWPORT ATTRAVERSO LA PAGINA E QUINDI IL VIEWPORT "INCONTRA" GLI ELEMENTI IN PAGINA. 
+			L'INTERSECTIONOBSERVER RIESCE AD ACCORGERSI QUANDO IL VIEWPORT, MA NON SOLO QUESTO !, INCROCIA UN ELEMENTO IN PAGINA CHE GLI DICO DI OSSERVARE, E IN QUESTO CASO ESEGUE IL CALLBACK CHE GLI HO SPECIFICATO. 
+			LA "PORZIONE" DI INCROCIO CHE FA SCATTARE IL CALLBACK E' DEFINITA DAL PARAMETRO *THRESHOLD, POSSO DEFINIRE UN ARRAY DI THRESHOLD. 
+			IL CALLBACK DEVE AVERE DUE PARAMETRI: entries (I "SEGNALI" CHE MI GENERA L'OBSERVER, UNO PER OGNI THRESHOLD SPECIFICATO) E observer (L'OBSERVER STESSO, PARAMETRO NON OBBLIGATORIO)
+				SE IMPOSTO THRESHOLD CON UN ARRAY DI VALORI, ENTRIES SARA' UN ARRAY, PRENDO COMUNQUE L'ELEMENTO CON INDICE 0
+			
+			NELL'ESEMPIO OSSERVO UNA SEZIONE DELLA PAGINA (SECTION1) E SPECIFICO DUE THRESHOLD: 0 E 0.2 (20%).
+			IN QUESTO MODO QUANDO SCROLLO VERSO IL BASSO E SECTION1 INIZIA AD ENTRARE NEL VIEWPORT, QUANDO RAGGIUNGE IL 20% SCATTA IL CALLBACK. 
+			QUANDO CONTINUO LO SCROLL VERSO IL BASSO E LA SEZIONE E' COMPLETAMENTE FUORI DAL VIEWPORT (THRESHOLD 0) ALLORA IL CALLBACK SCATTA DI NUOVO. 
+				const callback = function (entries, observer) {
+				  entries.forEach(entry => console.log(entry));
+				}
+				const opt = {
+				  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
+				  threshold: [0, 0.2]    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. 
+				}
+				const observer = new IntersectionObserver(callback, opt);
+				observer.observe(section1);			
+				
+			ALTRO ESEMPIO: NAVBAR DELL'HEADER CHE VOGLIO MOSTRARE QUANDO SCROLLO IN BASSO E AD UN CERTO PUNTO L'HEADER NON E' PIU' VISIBILE. 
+				const header = document.querySelector('.header');	
+				const navHeight = nav.getBoundingClientRect().height;   // ottengo altezza nav
+
+				const stickyNav = function (entries) {
+				  const entry = entries[0];	  // mi prendo la prima entry che è l'ultima generata 
+				  // const [entry] = entries; //stessa cosa usando spread ma non si capisce..
+				  if (!entry.isIntersecting) nav.classList.add('sticky');	//isIntersecting è true quando l'header non è più intersecato dal viewport, quindi quando non lo è più mostro la navbar, altrimento quando lo è non la mostro più
+				  else nav.classList.remove('sticky');
+				}
+				const opt = {
+				  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
+				  threshold: 0,    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. qui metto 0 perché voglio attivare quando l'header non è più visibile 
+				  rootMargin: `-${navHeight}px` //margine del root, togliendo esattamente la dimensione del navbar faccio in modo che raggiunga threshold 0 90 pixel prima che finisca l'header.
+				}
+				const headerObserver = new IntersectionObserver(stickyNav, opt);
+				headerObserver.observe(header);			
+				
+			ALTRO ESEMPIO, MOSTRARE DELLE SEZIONI IN PAGINA MAN MANO CHE SCROLLO VERSO IL BASSO. 
+				const revealSection = function (entries, observer) {
+				  const [entry] = entries;
+
+				  if (!entry.isIntersecting) return;  // se l'entry non è di intersezione esco
+
+				  entry.target.classList.remove('section--hidden'); //rimuovo il class hidden in modo da mostrare la sezione 
+				  observer.unobserve(entry.target);  // una volta mostrata la sezione non mi serve più osservarla e quindi la tolgo dall'observer
+				}
+				const allSections = document.querySelectorAll('.section');
+
+				const sectionObserver = new IntersectionObserver(revealSection, {
+				  root: null,
+				  threshold: 0.15
+				});
+				allSections.forEach(section => {			// ciclo su tutte le section per: aggiungerle all'observer e nasconderle (aggiungendo un class che imposta opacity: 0)
+				  sectionObserver.observe(section);				
+				  section.classList.add('section--hidden');
+				});
+			
+		** IMAGE LAZY LOAD 
+			<img 
+				src="img/grow-lazy.jpg" 	// in src metto immagine a basso risoluzione
+				data-src="img/grow.jpg" 	// in data-src metto immagine ad alta risoluzione che viene caricata in un secondo momento
+				alt="Plant" 	
+				class="features__img lazy-img" />	// lazy-img, style css che applica filter: blur(20px); all'immagine a bassa risoluzione 
+				
+			const imgTargets = document.querySelectorAll('img[data-src]');
+			const loadImg = function (entries, observer) {
+			  const [entry] = entries;
+
+			  if (!entry.isIntersecting) return;  // se l'entry non è di intersezione esco
+
+			  const img = entry.target;
+			  img.src = img.dataset.src;		  // sostituisco src (che ha l'immagine SD) con quella HD nell'attributo data-src 
+			  img.addEventListener('load', function (e) {
+				img.classList.remove('lazy-img');	// tolgo il blur solo dopo che l'immagine è stata caricata !
+			  });
+			  observer.unobserve(img);	
+			}
+			const imgObserver = new IntersectionObserver(loadImg, {
+			  root: null,
+			  threshold: 0,
+			  rootMargin: '200px'
+			});
+			imgTargets.forEach(img => imgObserver.observe(img));			
+			
+		** SLIDER COMPONENT 
+		
