@@ -51,6 +51,12 @@ const handleClick = function (e) {		// devo per forza dichiarare solo il paramet
 }
 document.querySelector('.nav__logo').addEventListener('click', handleClick.bind({ param: "giggi" }));
 
+// chiedere conferma dell'uscita dalla pagina, quando l'utente chiude tab o browser 
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  console.log('window.beforeunload', e);
+  e.returnValue = '';		// in chiusura tab o browser fa uscire il popup che chiede conferma, ma non si può personalizzare il messaggio (una volta si poteva ma poi abuso e quindi tolto potere :)) 
+})		
 	
 BEST PRACTICES 
 	HTML
@@ -89,7 +95,8 @@ BEST PRACTICES
 				document.documentElement.style.setProperty('--color-primary', 'orangered');
 		. style.opacity per schiarire
 		. selettore elementi per tag e attributo: img[data-src] 
-			document.querySelectorAll(img[data-src])
+			document.querySelectorAll(img[data-src])			//seleziono elemento img con attributo data-src
+			document.querySelector(`.dots__dot[data-slide="${slide}"]`)		// seleziono elemento con classe dots__dot e attributo data-slide uguale a ... 
 		. elemento.style.transform(...) applica trasformazione all'elemento, per esempio
 			style.transform = "scale(0.5)"  //rimpicciolisce 
 			style.transform = "translateX(-200)" // sposta sull'asse orizzontale, 200 pixel a sinistra
@@ -2104,123 +2111,383 @@ statement = istruzione
 			2. DETERMINE WHAT ELEMENT ORIGINATED THE EVENT (MATCHING STRATEGY) 
 			IMPOSTARE CORRETTAMENTE UN MATCHING STRATEGY, QUINDI IDENTIFICARE L'ELEMENTO (TIPO UNA CLASSE) CHE IDENTIFICA IN MODO UNIVOCO GLI ELEMENTI DA ISOLARE, E' L'ELEMENTO PIU' COMPLESSO DELL'EVENT DELEGATION 
 			
-		** DOM TRAVERSING 
-			PARTENDO DA UN ELEMENTO, SELEZIONARE ELEMENTO PADRE, GLI ELEMENTI FIGLI O QUELLI ALLO STESSO LIVELLO. RICORDIAMO CHE IL DOM E' UN ALBERO. COME IL DL1 :) TIPO GNP 
-			
-			* SCENDERE (CHILDREN)
-			elemento.querySelectorAll(selettore) 	RESTITUISCE NodeList CON TUTTI GLI ELEMENTI CHE SODDISFANO IL SELETTORE E CHE SONO FIGLI ANCHE INDIRETTI DI ELEMENTO. 
-			elemento.childNodes						RESTITUISCE NodeList CON I SOLI NODI DIRETTI FIGLI DI ELEMENTO, DI TUTTI I TIPI (TEXT, COMMENT, SPAN, ECC..) 
-			elemento.children 						RESTITUISCE HTMLCollection CON I SOLI ELEMENTI DIRETTI FIGLI DI ELEMENTO, QUINDI SOLO DI TIPO ELEMENT 
-			elemento.firstElementChild				RESTITUISCE IL PRIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE IL PRIMO RESTITUITO DA elemento.children
-			elemento.lastElementChild				RESTITUISCE L'ULTIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE L'ULTIMOI RESTITUITO DA elemento.children
-			
-			* SALIRE (PARENTS) 
-			elemento.parentNode						RESTITUISCE IL NODO PADRE DIRETTO
-			elemento.parentElement					RESTITUISCE L'ELEMENTO PADRE DIRETTO 
-			elemento.closest(selettore)				RESTITUISCE L'ELEMENTO PADRE DEL TIPO INDICATO DAL SELETTORE, DIRETTO O INDIRETTO, NON IMPORTA DI QUALE LIVELLO. ANCHE SE STESSO !
-													PRATICAMENTE E' UGUALE A QUERYSELECTOR MA VERSO L'ALTO INVECE CHE VERSO IL BASSO 
-				document.querySelector('.header__img').closest('.header').style.background = 'var(--color-tertiary)'
-				h1.closest('h1') 	//TORNA SE STESSO 
-			
-			* STESSO LIVELLO (SIBLINGS) 
-			elemento.previousElementSibling			ELEMENTO PIU' VICINO A "SINISTRA" 
-			elemento.nextElementSibling				ELEMENTO PIU' VICINO A "DESTRA" 
-			elemento.previousSibling				NODO PIU' VICINO A SINISTRA 
-			elemento.nextSibling					NODO PIU' VICINO A DESTRA 
-				NOTA BENE: NON ESISTONO METODI CHE RESTITUISCONO I SIBLING INDIPENDENTEMENTE DALLA LORO POSIZIONE. 
-				           POSSO USARE IL TRUCCO DI RISALIRE AL PADRE E POI OTTENERE TUTTI I FIGLI 
-						   elemento.parentElement.children 
-						   esempio di modifica di tutti i sibling di un elemnto h1 ad eccezione di se stesso: 
-						   // faccio spread di HTMLCollection in array e poi forEach
-						   [...h1.parentElement.children].forEach(function(el){
-							el !== h1 && el.style.transform = "scale(0.5)";
-						   });
+	** DOM TRAVERSING 
+		PARTENDO DA UN ELEMENTO, SELEZIONARE ELEMENTO PADRE, GLI ELEMENTI FIGLI O QUELLI ALLO STESSO LIVELLO. RICORDIAMO CHE IL DOM E' UN ALBERO. COME IL DL1 :) TIPO GNP 
+		
+		* SCENDERE (CHILDREN)
+		elemento.querySelectorAll(selettore) 	RESTITUISCE NodeList CON TUTTI GLI ELEMENTI CHE SODDISFANO IL SELETTORE E CHE SONO FIGLI ANCHE INDIRETTI DI ELEMENTO. 
+		elemento.childNodes						RESTITUISCE NodeList CON I SOLI NODI DIRETTI FIGLI DI ELEMENTO, DI TUTTI I TIPI (TEXT, COMMENT, SPAN, ECC..) 
+		elemento.children 						RESTITUISCE HTMLCollection CON I SOLI ELEMENTI DIRETTI FIGLI DI ELEMENTO, QUINDI SOLO DI TIPO ELEMENT 
+		elemento.firstElementChild				RESTITUISCE IL PRIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE IL PRIMO RESTITUITO DA elemento.children
+		elemento.lastElementChild				RESTITUISCE L'ULTIMO ELEMENT FIGLIO DIRETTO DI ELEMENTO, SAREBBE L'ULTIMOI RESTITUITO DA elemento.children
+		
+		* SALIRE (PARENTS) 
+		elemento.parentNode						RESTITUISCE IL NODO PADRE DIRETTO
+		elemento.parentElement					RESTITUISCE L'ELEMENTO PADRE DIRETTO 
+		elemento.closest(selettore)				RESTITUISCE L'ELEMENTO PADRE DEL TIPO INDICATO DAL SELETTORE, DIRETTO O INDIRETTO, NON IMPORTA DI QUALE LIVELLO. ANCHE SE STESSO !
+												PRATICAMENTE E' UGUALE A QUERYSELECTOR MA VERSO L'ALTO INVECE CHE VERSO IL BASSO 
+			document.querySelector('.header__img').closest('.header').style.background = 'var(--color-tertiary)'
+			h1.closest('h1') 	//TORNA SE STESSO 
+		
+		* STESSO LIVELLO (SIBLINGS) 
+		elemento.previousElementSibling			ELEMENTO PIU' VICINO A "SINISTRA" 
+		elemento.nextElementSibling				ELEMENTO PIU' VICINO A "DESTRA" 
+		elemento.previousSibling				NODO PIU' VICINO A SINISTRA 
+		elemento.nextSibling					NODO PIU' VICINO A DESTRA 
+			NOTA BENE: NON ESISTONO METODI CHE RESTITUISCONO I SIBLING INDIPENDENTEMENTE DALLA LORO POSIZIONE. 
+					   POSSO USARE IL TRUCCO DI RISALIRE AL PADRE E POI OTTENERE TUTTI I FIGLI 
+					   elemento.parentElement.children 
+					   esempio di modifica di tutti i sibling di un elemnto h1 ad eccezione di se stesso: 
+					   // faccio spread di HTMLCollection in array e poi forEach
+					   [...h1.parentElement.children].forEach(function(el){
+						el !== h1 && el.style.transform = "scale(0.5)";
+					   });
 
-		** API IntersectionObserver 
-			E' UN API CHE MI PERMETTE DI OSSERVARE UN ELEMENTO DEL DOM E DI INVOCARE UN CALLBACK QUANDO QUESTO ELEMENTO VIENE "INTERSECATO" DA UN ALTRO ELEMENTO, CHE PUO' ESSERE IL VIEWPORT. 
-			QUANDO FACCIO SCROLL IN PRATICA MUOVO IL VIEWPORT ATTRAVERSO LA PAGINA E QUINDI IL VIEWPORT "INCONTRA" GLI ELEMENTI IN PAGINA. 
-			L'INTERSECTIONOBSERVER RIESCE AD ACCORGERSI QUANDO IL VIEWPORT, MA NON SOLO QUESTO !, INCROCIA UN ELEMENTO IN PAGINA CHE GLI DICO DI OSSERVARE, E IN QUESTO CASO ESEGUE IL CALLBACK CHE GLI HO SPECIFICATO. 
-			LA "PORZIONE" DI INCROCIO CHE FA SCATTARE IL CALLBACK E' DEFINITA DAL PARAMETRO *THRESHOLD, POSSO DEFINIRE UN ARRAY DI THRESHOLD. 
-			IL CALLBACK DEVE AVERE DUE PARAMETRI: entries (I "SEGNALI" CHE MI GENERA L'OBSERVER, UNO PER OGNI THRESHOLD SPECIFICATO) E observer (L'OBSERVER STESSO, PARAMETRO NON OBBLIGATORIO)
-				SE IMPOSTO THRESHOLD CON UN ARRAY DI VALORI, ENTRIES SARA' UN ARRAY, PRENDO COMUNQUE L'ELEMENTO CON INDICE 0
+	** API IntersectionObserver 
+		E' UN API CHE MI PERMETTE DI OSSERVARE UN ELEMENTO DEL DOM E DI INVOCARE UN CALLBACK QUANDO QUESTO ELEMENTO VIENE "INTERSECATO" DA UN ALTRO ELEMENTO, CHE PUO' ESSERE IL VIEWPORT. 
+		QUANDO FACCIO SCROLL IN PRATICA MUOVO IL VIEWPORT ATTRAVERSO LA PAGINA E QUINDI IL VIEWPORT "INCONTRA" GLI ELEMENTI IN PAGINA. 
+		L'INTERSECTIONOBSERVER RIESCE AD ACCORGERSI QUANDO IL VIEWPORT, MA NON SOLO QUESTO !, INCROCIA UN ELEMENTO IN PAGINA CHE GLI DICO DI OSSERVARE, E IN QUESTO CASO ESEGUE IL CALLBACK CHE GLI HO SPECIFICATO. 
+		LA "PORZIONE" DI INCROCIO CHE FA SCATTARE IL CALLBACK E' DEFINITA DAL PARAMETRO *THRESHOLD, POSSO DEFINIRE UN ARRAY DI THRESHOLD. 
+		IL CALLBACK DEVE AVERE DUE PARAMETRI: entries (I "SEGNALI" CHE MI GENERA L'OBSERVER, UNO PER OGNI THRESHOLD SPECIFICATO) E observer (L'OBSERVER STESSO, PARAMETRO NON OBBLIGATORIO)
+			SE IMPOSTO THRESHOLD CON UN ARRAY DI VALORI, ENTRIES SARA' UN ARRAY, PRENDO COMUNQUE L'ELEMENTO CON INDICE 0
+		
+		NELL'ESEMPIO OSSERVO UNA SEZIONE DELLA PAGINA (SECTION1) E SPECIFICO DUE THRESHOLD: 0 E 0.2 (20%).
+		IN QUESTO MODO QUANDO SCROLLO VERSO IL BASSO E SECTION1 INIZIA AD ENTRARE NEL VIEWPORT, QUANDO RAGGIUNGE IL 20% SCATTA IL CALLBACK. 
+		QUANDO CONTINUO LO SCROLL VERSO IL BASSO E LA SEZIONE E' COMPLETAMENTE FUORI DAL VIEWPORT (THRESHOLD 0) ALLORA IL CALLBACK SCATTA DI NUOVO. 
+			const callback = function (entries, observer) {
+			  entries.forEach(entry => console.log(entry));
+			}
+			const opt = {
+			  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
+			  threshold: [0, 0.2]    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. 
+			}
+			const observer = new IntersectionObserver(callback, opt);
+			observer.observe(section1);			
 			
-			NELL'ESEMPIO OSSERVO UNA SEZIONE DELLA PAGINA (SECTION1) E SPECIFICO DUE THRESHOLD: 0 E 0.2 (20%).
-			IN QUESTO MODO QUANDO SCROLLO VERSO IL BASSO E SECTION1 INIZIA AD ENTRARE NEL VIEWPORT, QUANDO RAGGIUNGE IL 20% SCATTA IL CALLBACK. 
-			QUANDO CONTINUO LO SCROLL VERSO IL BASSO E LA SEZIONE E' COMPLETAMENTE FUORI DAL VIEWPORT (THRESHOLD 0) ALLORA IL CALLBACK SCATTA DI NUOVO. 
-				const callback = function (entries, observer) {
-				  entries.forEach(entry => console.log(entry));
-				}
-				const opt = {
-				  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
-				  threshold: [0, 0.2]    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. 
-				}
-				const observer = new IntersectionObserver(callback, opt);
-				observer.observe(section1);			
-				
-			ALTRO ESEMPIO: NAVBAR DELL'HEADER CHE VOGLIO MOSTRARE QUANDO SCROLLO IN BASSO E AD UN CERTO PUNTO L'HEADER NON E' PIU' VISIBILE. 
-				const header = document.querySelector('.header');	
-				const navHeight = nav.getBoundingClientRect().height;   // ottengo altezza nav
+		ALTRO ESEMPIO: NAVBAR DELL'HEADER CHE VOGLIO MOSTRARE QUANDO SCROLLO IN BASSO E AD UN CERTO PUNTO L'HEADER NON E' PIU' VISIBILE. 
+			const header = document.querySelector('.header');	
+			const navHeight = nav.getBoundingClientRect().height;   // ottengo altezza nav
 
-				const stickyNav = function (entries) {
-				  const entry = entries[0];	  // mi prendo la prima entry che è l'ultima generata 
-				  // const [entry] = entries; //stessa cosa usando spread ma non si capisce..
-				  if (!entry.isIntersecting) nav.classList.add('sticky');	//isIntersecting è true quando l'header non è più intersecato dal viewport, quindi quando non lo è più mostro la navbar, altrimento quando lo è non la mostro più
-				  else nav.classList.remove('sticky');
-				}
-				const opt = {
-				  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
-				  threshold: 0,    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. qui metto 0 perché voglio attivare quando l'header non è più visibile 
-				  rootMargin: `-${navHeight}px` //margine del root, togliendo esattamente la dimensione del navbar faccio in modo che raggiunga threshold 0 90 pixel prima che finisca l'header.
-				}
-				const headerObserver = new IntersectionObserver(stickyNav, opt);
-				headerObserver.observe(header);			
-				
-			ALTRO ESEMPIO, MOSTRARE DELLE SEZIONI IN PAGINA MAN MANO CHE SCROLLO VERSO IL BASSO. 
-				const revealSection = function (entries, observer) {
-				  const [entry] = entries;
-
-				  if (!entry.isIntersecting) return;  // se l'entry non è di intersezione esco
-
-				  entry.target.classList.remove('section--hidden'); //rimuovo il class hidden in modo da mostrare la sezione 
-				  observer.unobserve(entry.target);  // una volta mostrata la sezione non mi serve più osservarla e quindi la tolgo dall'observer
-				}
-				const allSections = document.querySelectorAll('.section');
-
-				const sectionObserver = new IntersectionObserver(revealSection, {
-				  root: null,
-				  threshold: 0.15
-				});
-				allSections.forEach(section => {			// ciclo su tutte le section per: aggiungerle all'observer e nasconderle (aggiungendo un class che imposta opacity: 0)
-				  sectionObserver.observe(section);				
-				  section.classList.add('section--hidden');
-				});
+			const stickyNav = function (entries) {
+			  const entry = entries[0];	  // mi prendo la prima entry che è l'ultima generata 
+			  // const [entry] = entries; //stessa cosa usando spread ma non si capisce..
+			  if (!entry.isIntersecting) nav.classList.add('sticky');	//isIntersecting è true quando l'header non è più intersecato dal viewport, quindi quando non lo è più mostro la navbar, altrimento quando lo è non la mostro più
+			  else nav.classList.remove('sticky');
+			}
+			const opt = {
+			  root: null,       //specifico l'elemento che andrà a intersecare l'elemento osservato. se null è il viewport !
+			  threshold: 0,    //percentuale (in decimi, 0.1=10%) di intersezione che farà eseguire il callback. posso passare anche un array. qui metto 0 perché voglio attivare quando l'header non è più visibile 
+			  rootMargin: `-${navHeight}px` //margine del root, togliendo esattamente la dimensione del navbar faccio in modo che raggiunga threshold 0 90 pixel prima che finisca l'header.
+			}
+			const headerObserver = new IntersectionObserver(stickyNav, opt);
+			headerObserver.observe(header);			
 			
-		** IMAGE LAZY LOAD 
-			<img 
-				src="img/grow-lazy.jpg" 	// in src metto immagine a basso risoluzione
-				data-src="img/grow.jpg" 	// in data-src metto immagine ad alta risoluzione che viene caricata in un secondo momento
-				alt="Plant" 	
-				class="features__img lazy-img" />	// lazy-img, style css che applica filter: blur(20px); all'immagine a bassa risoluzione 
-				
-			const imgTargets = document.querySelectorAll('img[data-src]');
-			const loadImg = function (entries, observer) {
+		ALTRO ESEMPIO, MOSTRARE DELLE SEZIONI IN PAGINA MAN MANO CHE SCROLLO VERSO IL BASSO. 
+			const revealSection = function (entries, observer) {
 			  const [entry] = entries;
 
 			  if (!entry.isIntersecting) return;  // se l'entry non è di intersezione esco
 
-			  const img = entry.target;
-			  img.src = img.dataset.src;		  // sostituisco src (che ha l'immagine SD) con quella HD nell'attributo data-src 
-			  img.addEventListener('load', function (e) {
-				img.classList.remove('lazy-img');	// tolgo il blur solo dopo che l'immagine è stata caricata !
-			  });
-			  observer.unobserve(img);	
+			  entry.target.classList.remove('section--hidden'); //rimuovo il class hidden in modo da mostrare la sezione 
+			  observer.unobserve(entry.target);  // una volta mostrata la sezione non mi serve più osservarla e quindi la tolgo dall'observer
 			}
-			const imgObserver = new IntersectionObserver(loadImg, {
+			const allSections = document.querySelectorAll('.section');
+
+			const sectionObserver = new IntersectionObserver(revealSection, {
 			  root: null,
-			  threshold: 0,
-			  rootMargin: '200px'
+			  threshold: 0.15
 			});
-			imgTargets.forEach(img => imgObserver.observe(img));			
-			
-		** SLIDER COMPONENT 
+			allSections.forEach(section => {			// ciclo su tutte le section per: aggiungerle all'observer e nasconderle (aggiungendo un class che imposta opacity: 0)
+			  sectionObserver.observe(section);				
+			  section.classList.add('section--hidden');
+			});
 		
+	** IMAGE LAZY LOAD 
+		<img 
+			src="img/grow-lazy.jpg" 	// in src metto immagine a basso risoluzione
+			data-src="img/grow.jpg" 	// in data-src metto immagine ad alta risoluzione che viene caricata in un secondo momento
+			alt="Plant" 	
+			class="features__img lazy-img" />	// lazy-img, style css che applica filter: blur(20px); all'immagine a bassa risoluzione 
+			
+		const imgTargets = document.querySelectorAll('img[data-src]');
+		const loadImg = function (entries, observer) {
+		  const [entry] = entries;
+
+		  if (!entry.isIntersecting) return;  // se l'entry non è di intersezione esco
+
+		  const img = entry.target;
+		  img.src = img.dataset.src;		  // sostituisco src (che ha l'immagine SD) con quella HD nell'attributo data-src 
+		  img.addEventListener('load', function (e) {
+			img.classList.remove('lazy-img');	// tolgo il blur solo dopo che l'immagine è stata caricata !
+		  });
+		  observer.unobserve(img);	
+		}
+		const imgObserver = new IntersectionObserver(loadImg, {
+		  root: null,
+		  threshold: 0,
+		  rootMargin: '200px'
+		});
+		imgTargets.forEach(img => imgObserver.observe(img));			
+		
+	** SLIDER COMPONENT 
+const slider = function () {
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.querySelector('.dots');
+
+  let curSlide = 0;
+  const maxSlides = slides.length;
+
+  // Functions
+  const createDots = function () {
+    slides.forEach((_, i) => dotsContainer.insertAdjacentHTML('beforeend', `<button class="dots__dot" data-slide="${i}"></button>`));
+  }
+
+  const activateDot = function (slide) {
+    document.querySelectorAll('.dots__dot').forEach(e => e.classList.remove('dots__dot--active'));
+    // select the dot having attribute data-slide equal to input slide
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add('dots__dot--active');
+  }
+
+  // slides.forEach((slide, i) => slide.style.transform = `translateX(${100 * i}%)`);
+  const goToSlide = function (slide) {
+    slides.forEach((s, i) => s.style.transform = `translateX(${100 * (i - slide)}%)`);
+  }
+
+  const prevSlide = function (e) {
+    curSlide--;
+    if (curSlide < 0) curSlide = (maxSlides - 1);
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+  const nextSlide = function (e) {
+    curSlide++;
+    if (curSlide >= maxSlides) curSlide = 0;
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+
+  const init = function () {
+    createDots();
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+  init();
+
+
+  btnLeft.addEventListener('click', prevSlide);
+  btnRight.addEventListener('click', nextSlide);
+
+  document.addEventListener('keydown', function (e) {
+    e.key === 'ArrowLeft' && prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  // Use event delegation by adding an event listener to the dots container instead of adding it to each dot
+  dotsContainer.addEventListener('click', function (e) {
+    const elem = e.target;
+    if (!elem.classList.contains('dots__dot')) return;
+    //activateDot(elem);
+    const slide = elem.dataset.slide;
+    goToSlide(slide);
+    activateDot(slide);
+  });
+}
+slider();
+
+	*** LIFECYCLE DOM EVENTS 
+		1. DOM CONTENT LOADED ("DOMContentLoaded")
+			FIRED BY DOCUMENT QUANDO L'HTML E' STATO COMPLETAMENTE PARSATO (DOWNLOADED + CONVERTED IN DOM TREE) + TUTTI GLI SCRIPT SCARICATI ED ESEGUITI****. 
+				**** MA NON IMMAGINI E ALTRE RISORSE ESTERNE COME CSS !! ****
+				**** MA NON ASPETTA L'ESECUZIONE DEGLI SCRIPT JS CON ASYNC !! ****
+				**** MA INVECE ASPETTA L'ESECUZIONE DEGLI SCRIPT JS CON DEFER !! 
+				NOTA BENE: IL TEMPO DI ESECUZIONE DEL DOMCONTENTLOADED SI VEDE IN CHROME DEV TOOLS, NETWORK BARRA IN BASSO 
+				NOTA BENE: CORRISPONDE A JQUERY DOCUMENT.READY !!!!!!
+			document.addEventListener('DOMContentLoaded', function (e) {
+			  console.log("ciao da giggi", e);
+			})				
+		2. LOAD EVENT ("load")
+			FIRED BY WINDOW QUANDO ANCHE LE IMMAGINI E LE RISORSE ESTERNE, COME CSS, SONO STATE CARICATE, INSOMMA QUANDO LA PAGINA E' STATA CARICATA NELLA SUA INTEREZZA
+				NOTA BENE: IL TEMPO DI ESECUZIONE DEL LOAD SI VEDE IN CHROME DEV TOOLS, NETWORK BARRA IN BASSO 
+			window.addEventListener('load', function (e) {
+			  console.log('window.load', e);
+			})				
+		3. BEFORE UNLOAD ("beforeunload")
+			FIRED BY WINDOW IMMEDIATELY BEFORE A USER IS ABOUT TO LEAVING A PAGE. 
+				NOTA BENE: IN ALCUNI BROWSER, MA NON IN CHROME BISOGNA AGGIUNGERE e.preventDefault() NELLA FUNCTION DELL EVENT LISTENER 
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  console.log('window.beforeunload', e);
+  e.returnValue = '';		// in chiusura tab o browser O RELOAD DELLA PAGINA! fa uscire il popup che chiede conferma !
+})				
+		
+	*** DEFER E ASYNC PER CARICAMENTO FILE JS 
+	
+		** TAG SCRIPT NELL'HEAD: 
+			QUANDO IL BROWSER HA SCARICATO L'HTML INIZIA FARE IL PARSE PER CONVERTIRLO IN DOM TREE.
+			SE UN TAG SCRIPT E' STATO POSIZIONATO NELL'HEAD, IL BROWSER METTE IN PAUSA IL PARSING, SCARICA IL JS E LO ESEGUE. 
+			QUANDO E' TERMINATA L'ESECUZIONE IL BROWSER PROSEGUE IL PARSING E QUANDO HA TERMINATO FA IL FIRE DELL'EVENTO DOMContentLoaded. 
+			
+			NON VA BENE PERCHE': 
+				- IL PARSING DELL'HTML VIENE INTERROTTO 
+				- L'ESECUZIONE DEL JS AVVIENE A DOM TREE NON ANCORA COMPLETATO 
+		
+		** TAG SCRIPT ALLA FINE DEL BODY: 
+			IL BROWSER RIESCE A FARE IL PARSING DELL'HTML FINO ALLA FINE DEL BODY. 
+			TROVA IL TAG SCRIPT SCARICA IL JS E LO ESEGUE.
+			
+			MOLTO MEGLIO PERCHE': 
+				- IL PARSING DELL'HTML NON VIENE INTERROTTO, ANCHE SE POTREBBE ESSERLO SE IL TAG SCRIPT NON E' DAVVERO L'ULTIMO ELEMENTO DEL BODY 
+				- L'ESECUZIONE DEL JS AVVIENE A DOM TREE COMPLETATO, QUINDI IL JS TROVA TUTTI GLI ELEMENTI DELLA PAGINA PRESENTI NEL DOM
+				- SOLUZIONE NON ANCORA OTTIMALE
+				
+		** TAG SCRIPT NELL'HEAD CON PARAMETRO ASYNC 
+			IL DOWNLOAD DEL JS AVVIENE DURANTE DELL'HTML, IN MODO ASINCRONO, IN QUESTO MODO QUANDO IL BROWSER TROVA IL TAG SCRIPT E' GIA' PRONTO PER ESEGUIRLO 
+			MA QUANDO INIZIA L'ESECUZIONE IL PARSING DELL'HTML VIENE COMUNQUE INTERROTTO 
+			
+		** TAG SCRIPT NELL'HEAD CON PARAMETRO DEFER 
+			DOWNLOAD DEL JS ESEGUITO IN MODO ASINCRONO, DURANTE L'INIZIO DEL PARSING DELL'HTML (COME CON ASYNC) 
+			ESECUZIONE DEL JS *SOLO DOPO* CHE IL PARSING DELL'HTML E' TERMINATO, QUINDI IL PARSING DELL'HTML NON VIENE MAI INTERROTTO ! 
+			
+			
+		** CONFRONTO TRA SCRIPT IN END BODY, ASYNC E DEFER 
+			* END BODY: 
+				. LO SCRIPT E' SCARICATO ED ESEGUITO DOPO CHE IL PARSING DELL'HTML E' TERMINATO 
+				
+			* ASYNC IN HEAD 
+				. LO SCRIPT E' SCARICATO IN MODO ASINCRONO ED ESEGUITO IMMEDIATAMENTE 
+				. RICORDIAMO CHE L'EVENTO DOMContentLoaded (DOCUMENT READY) VIENE TRIGGERATO QUANDO SONO STATI ESEGUITI TUTTI GLI SCRIPT MA NON QUELLI CON ASYNC ! 
+					DOMContentLoaded NON ASPETTA GLI SCRIPT ASYNC !
+				. L'ORDINE DI ESECUZIONE DEGLI JS CON ASYNC NON E' GARANTITO CHE SIA L'ORDINE DEI TAG SCRIPT, QUELLO SCARICATO PRIMA VIENE ESEGUITO PRIMA 
+				
+			* DEFER IN HEAD 
+				. LO SCRIPT E' SCARICATO IN MODO ASINCRONO ED ESEGUITO SOLO DOPO LA FINE DEL PARSING DELL'HTML (COME AVVIENE CON QUELLI REGOLARI ALLA FINE DEL BODY)
+				. L'EVENTO DOMContentLoaded ASPETTA GLI SCRIPT CON DEFER (COME FA PER QUELLI REGOLARI ALLA FINE DEL BODY)
+				. L'ORDINE DI ESECUZIONE E' QUELLO DEI TAG, QUINDI SE IL MIO JS DIPENDE DA UN JS DI TERZE PARTI, QUESTO DEVE ESSERE DICHIARATO PRIMA 
+				
+		** USE CASES PER ASYNC E DEFER (IN HEAD) 
+			* USARE *DEFER* PER MIEI JS, SPECIE QUANDO DIPENDONO DA ALTRI JS: ENTRAMBI SARANNO DICHIARATI CON DEFER E LA LIBRERIA DA CUI DIPENDO DEVE ESSERE DICHIARATA PRIMA DELLA MIA 
+			* USARE *ASYNC* PER JS DI TERZE PARTI O LIBRERIE SINGOLE CHE NON DIPENDONO DA NESSUN'ALTRA  
+			* USARE JS IN END BODY QUANDO SO CHE VENGONO USATI VECCHI BROWSER CHE NON SUPPORTANO HTML 5 
+			
+	** OOP IN JS 		
+		>>>>FUNCTIONAL PROGRAMMING E' UN ALTRO PARADIGMA DI PROGRAMMAZIONE CHE AFFIANCA OOP PROGRAMMING. 
+		
+		PROTOTYPES: CONTIENE PROPERTIES E METHODS CHE GLI OGGETTI AD ESSO COLLEGATI POSSONO ACCEDERE ED USARE (PROTOTYPAL INHERITANCE) 
+		OBJECTS ARE LINKED TO A PROTOTYPE OBJECT 
+		OBJECTS DELEGATE THEIR BEHAVIOUR (=METHODS) TO THEIR PROTOTYPE (MENTRE IN OOP CLASSICO I METODI VENGONO COPIATI DALLA CLASSE ALL'ISTANZA, QUI INVECE I METODI RIMANGONO DEFINITI NEL PROTOTYPE E GLI OGGETTI ISTANZIATI DELEGANO I LORO METODI AL CODICE CONTENUTO NEL PROTOTYPE
+		IL PROTOTYPE E' ACCESSIBILE CON Oggetto.prototype PER ESEMPIO Array.prototype  
+		
+		** TRE MODI PER FARE OOP IN JS
+			1. CONSTRUCTOR FUNCTIONS 
+				- TECNICA PER CREARE OGGETTI DA FUNCTIONS
+				- E' IL MODO CON CUI FUNZIONANO OGGETTI COME Array, Map, Set 
+				- E' IL MODO PER FARE OOP CHE ESISTE DALLE PRIME VERSIONI DI JS 
+			
+			2. ES6 CLASSES, SONO UN "SYNTACTIC SUGAR" DEL METODO UNO. NON CORRISPONDONO AL CONCETTO DI CLASSE STANDARD OOP !
+				- E' UN MODO PIU' FIGO PER USARE IL METODO UNO 
+			
+			3. Object.create()
+				- E' IL MODO PIU' SEMPLICE PER LINKARE UN OGGETTO AL SUO PROTOTYPE OBJECT MA NON E' QUELLO PIU' USATO..
+				
+		
+		** CONSTRUCTOR FUNCTIONS (COSTRUTTORE!)
+			SONO FUNCTION NORMALI CHE SI INVOCANO CON new 
+			INIZIANO CON LETTERA MAIUSCOLA 
+				const Nomefunction = function(parametri costruttore) {
+					// instance properties 
+					this.parametro1 = parametro1; 	// this.parametro non deve essere uguale a parametro ricevuto nel costrutture ma è una convention 
+					this.parametro2 = parametro2; 
+					ecc.. 
+				}
+			INVOCO CON new 
+				new Nomefunction(parametri costruttore) 
+				
+				QUESTO FA SUCCEDERE 4 COSE DIETRO LE QUINTE: 
+				1. VIENE CREATO UN EMPTY OBJECT {}
+				2. LA FUNCTION VIENE CHIAMATA E IL THIS VIENE IMPOSTATA CON L'OGGETTO VUOTO 
+				3. L'OGGETTO CREATO VIENE LINKATO AL PROTOTYPE 
+				4. LA FUNCTION RITORNA AUTOMATICAMENTE L'OGGETTO, NON C'E' BISOGNO DI FARE RETURN 
+			
+			TESTO CON instanceof 
+				const giggi = new Person("Pierluigi", 1974);
+				console.log(giggi instanceof Person);				
+				
+			CONSTRUCTOR FUNCTION prototype   SAREBBE IL CLASS, MI PERMETTE DI DEFINIRE METODI CHE POI SONO MESSI A DISPOSIZIONE ALLE ISTANZE QUANDO LE CREO CON new 
+				E' UN OGGETTO, A SUA VOLTA HA UN __proto__ CHE LO CONNETTE A Object.prototype 
+		
+			** DEFINIRE METODI NEL prototype 
+				Nomefunction.prototype.nomeFunction = function(){
+					...
+				}
+					NOTA BENE: I METODI **NON** SI DICHIARANO NEL CONSTRUCTOR FUNCTION, BENSI' NEL PROTOTYPE !!!
+						IN QUESTO MODO ESISTE UNA SOLA COPIA DEL METODO, NEL PROTOTYPE. 
+						SE LA DICHIARO INVECE NEL CONSTRUCTOR FUNCTION E POI LO ISTANZIO, AVREI UNA COPIA DEL METODO IN OGNI ISTANZA CREATA COL new 
+						
+				OGNI ISTANZA PUO' ACCEDERE AL PROPRIO PROTOTYPE CON LA PROPERTY __proto__ CHE CORRISPONDE AL ConstructorFunction.prototype
+				TEST: Nomefunction.prototype.isPrototypeOf(istanza) 
+				
+					ATTENZIONE !!! Nomefunction.prototype NON E' IL PROTOTYPE DI Nomefunction MA DEGLI OGGETTI CHE VENGONO INSTANZIATI CON new !! 
+					
+			** DEFINIRE PROPERTY NEL prototype
+				Nomefunction.prototype.nomeProperty = valore; 
+				
+				TUTTE LE ISTANZE EREDITANO LE PROPERTY DEFINITE IN QUESTO MODO. 
+				QUESTE PROPERTY SONO EREDITATE MA NON SONO PROPRIE DELL'OGGETTO, BENSI' DEL PROTOTYPE: SOLO QUELLE DEFINITE NEL COSTRUTTORE LO SONO. 
+				PER FARE CHECK SE PROPERTY E' DELL'OGGETTO: istanza.hasOwnProperty('nomeproperty') 
+			
+			** PROTOTYPE CHAIN 
+				IN PRATICA QUANDO INVOCO UN METODO O REFERENZIO UNA PROPERTY SU UN OGGETTO, JS PER PRIMA COSA GUARDA SE ESISTONO NELL'OGGETTO. 
+				SE NON ESISTONO, GUARDA SE C'E' __proto__ E SE LO TROVA, VUOL DIRE CHE L'OGGETTO E' LINKATO A UN PROTOTYPE, PER CUI RISALE AL PROTOTYPE E CONTROLLA SE LI' C'E' IL METODO O LA PROPERTY.
+				L'OGGETTO prototype A CUI E' LINKATA LA MIA ISTANZA E' A SUA VOLTA UN OGGETTO CON LA PROPERTY __proto__ CHE LA LINKA A Object.prototype CHE E' IL TOP DELLA GERARCHIA DI PROTOTYPE. 
+				LA PROPERTY Object.prototype.__proto__ E' INFATTI NULL. 
+				
+				Nomefunction.prototype.constructor = RESTITUISCE Constructor function !
+				
+			** ESTENDERE PROTOTYPE BUILD-IN DI JS 
+				TUTTI GLI OGGETTI BUILT-IN DI JS HANNO IL PROTOTYPE PER ESEMPIO Array.prototype. NE CONSEGUE CHE POSSO AGGIUNGERE METODI E PROPRIETA' A QUESTI OGGETTI E AUTOMATICAMENTE TUTTE LE ISTANZE IN ESECUZIONE LI EREDITERANNO. 
+				
+		**  ES6 CLASSES
+		
+			SONO COME LE FUNCTION, POSSO DICHIARARLE CON UN ESPRESSIONE O UNA DICHIARAZIONE. 
+			DI FATTO LE CLASS SONO UN TIPO SPECIALE DI FUNCTION, SOTTO IL COFANO CI SONO LE FUNCTION. 
+			
+			** CLASS EXPRESSION
+				const PersonCl = class {
+				}
+				
+			** CLASS DECLARATION 
+				class PersonCl {
+					constructor(firstName, birthYear) {
+						this.firstName = firstName;
+						this.birthYear = birthYear;
+					}
+					//methods aggiunti al prototype degli object creati con new 
+					calcAge = function(){
+						console.log(2032-this.birthYear);
+					}
+					// niente virgole !!
+					greet = function(){
+						console.log(`welcome ${this.firstName}`);
+					}	
+				}
+
+				const pippo = new PersonCl('Giggi', 1974);
+				console.dir(pippo);
+				
+				//posso sempre aggiungere metodi o property agendo sulla property prototype 
+				PersonCl.prototype.welcome = function(){
+					..
+				}
+				
+			** NOTA BENE 
+				* CLASS NON SONO HOISTED, CIOE' PRIMA LE DEVO DICHIARARE E POI LE POSSO USARE, NON VICEVERSA !
+				* CLASS SONO FIRST-CLASS CITIZENS, COME LE FUNCTION, CIOE' LE POSSO PASSARE COME PARAMETRO IN INPUT E OUTPUT 
+				* CLASS SONO ESEGUITE IN STRICT MODE 
+				
+		** GETTER AND SETTER (ACCESSOR PROPERTIES) 
+			IN JS TUTTI GLI OGGETTI HANNO GETTER E SETTER. SI CHIAMANO ACCESSOR PROPERTIES (MENTRE GLI ALTRI SONO DATA PROPERTIES). 
+			* GETTER: PER DICHIARARE METTERE get PRIMA DEL METODO: 
+			
+			

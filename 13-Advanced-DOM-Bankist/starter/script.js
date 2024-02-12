@@ -169,7 +169,7 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 });
 allSections.forEach(section => {
   sectionObserver.observe(section);
-  section.classList.add('section--hidden');
+  //section.classList.add('section--hidden');
 });
 
 // LAZY IMAGES
@@ -194,8 +194,72 @@ const imgObserver = new IntersectionObserver(loadImg, {
 imgTargets.forEach(img => imgObserver.observe(img));
 
 // SLIDER COMPONENT
-const slides = document.querySelectorAll('.slide');
-slides.forEach((slide, i) => slide.style.transform = `translateX(${100 * i}%)`);
+
+const slider = function () {
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.querySelector('.dots');
+
+  let curSlide = 0;
+  const maxSlides = slides.length;
+
+  // Functions
+  const createDots = function () {
+    slides.forEach((_, i) => dotsContainer.insertAdjacentHTML('beforeend', `<button class="dots__dot" data-slide="${i}"></button>`));
+  }
+
+  const activateDot = function (slide) {
+    document.querySelectorAll('.dots__dot').forEach(e => e.classList.remove('dots__dot--active'));
+    // select the dot having attribute data-slide equal to input slide
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add('dots__dot--active');
+  }
+
+  // slides.forEach((slide, i) => slide.style.transform = `translateX(${100 * i}%)`);
+  const goToSlide = function (slide) {
+    slides.forEach((s, i) => s.style.transform = `translateX(${100 * (i - slide)}%)`);
+  }
+
+  const prevSlide = function (e) {
+    curSlide--;
+    if (curSlide < 0) curSlide = (maxSlides - 1);
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+  const nextSlide = function (e) {
+    curSlide++;
+    if (curSlide >= maxSlides) curSlide = 0;
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+
+  const init = function () {
+    createDots();
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  }
+  init();
+
+
+  btnLeft.addEventListener('click', prevSlide);
+  btnRight.addEventListener('click', nextSlide);
+
+  document.addEventListener('keydown', function (e) {
+    e.key === 'ArrowLeft' && prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  // Use event delegation by adding an event listener to the dots container instead of adding it to each dot
+  dotsContainer.addEventListener('click', function (e) {
+    const elem = e.target;
+    if (!elem.classList.contains('dots__dot')) return;
+    //activateDot(elem);
+    const slide = elem.dataset.slide;
+    goToSlide(slide);
+    activateDot(slide);
+  });
+}
+slider();
 
 /*
 const h1 = document.querySelector('h1');
@@ -260,3 +324,18 @@ const handleClick = function (e) {		// devo per forza dichiarare solo il paramet
 }
 document.querySelector('.nav__logo').addEventListener('click', handleClick.bind({ param: "giggi" }));
 */
+
+
+document.addEventListener('DOMContentLoaded', function (e) {
+  console.log("document.DOMContentLoaded", e);
+})
+
+window.addEventListener('load', function (e) {
+  console.log('window.load', e);
+})
+
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  console.log('window.beforeunload', e);
+  e.returnValue = '';
+})
